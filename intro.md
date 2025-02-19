@@ -63,7 +63,26 @@ zerodium: azienda broker di vulnerabilità. Compra le vulnerabilità trovate da 
 - crazy 
 
 Esempi di attacchi:
-... listone ...
+- sniffing e snooping:
+    - due tecniche di intercettazione di dati nella sicurezza informatica, spesso utilizzate per spiare le comunicazioni in una rete.
+    - Lo sniffing è il processo di cattura e analisi del traffico di rete. Può essere usato per scopi legittimi, come il monitoraggio delle prestazioni della rete, ma anche per attività malevole, come il furto di credenziali o dati sensibili.
+        - Esempi di strumenti: Wireshark, tcpdump.
+        - Modalità di attacco: l'attaccante può intercettare il traffico su reti Wi-Fi non protette o eseguire un attacco Man-in-the-Middle (MitM).
+
+    - Lo snooping si riferisce alla sorveglianza o al monitoraggio non autorizzato di dati, spesso a livello di dispositivi o sistemi. Può avvenire su e-mail, file o conversazioni di rete.
+        - Esempi: un amministratore di sistema che spia dati degli utenti senza permesso, o un malware che raccoglie informazioni dai file.
+        - Può essere fatto attraverso software malevoli, keylogger o accessi non autorizzati.
+
+    - Differenza principale:
+        - Lo sniffing è focalizzato sull’intercettazione del traffico di rete.
+        - Lo snooping riguarda l'accesso non autorizzato ai dati di un sistema o dispositivo.
+    - Entrambe le tecniche possono essere prevenute con crittografia (HTTPS, VPN), firewall e segmentazione della rete. 🚀
+
+- spoofing:
+    - tecnica di attacco informatico in cui un attaccante si maschera da entità fidata per ingannare un sistema o un utente e ottenere accesso a dati sensibili o causare danni. Il termine significa letteralmente "falsificazione" o "camuffamento".
+    - Tipi di Spoofing più comuni
+        - IP Spoofing: L'attaccante falsifica il proprio indirizzo IP per sembrare un altro dispositivo, spesso per eludere firewall o lanciare attacchi DDoS.
+        - DNS Spoofing:  Modifica le risposte DNS per reindirizzare gli utenti a siti falsi, spesso usati per phishing o diffusione di malware.
 
 **syn flooding**:
 esempio interessante perchè fa vedere come un protocollo ben costruito ai fini delle comunicazione, progettato in un mondo fidato privo di attacchi informatici.
