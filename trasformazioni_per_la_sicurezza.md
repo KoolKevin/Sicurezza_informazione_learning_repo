@@ -57,14 +57,18 @@ abbiamo bisogno di un attestato di autenticità.
 
 Nuove trasformazioni
 - S(ign)
-    - segreta, la sa fare solo il mittente
+    - trasformazione segreta, la sa fare solo il mittente
     - nessuno può imitare S(m) del mittente
     
 - V(erify)
     - la sanno fare tutti (non stiamo proteggendo la riservatezza)
     - produce due output: si/no; il messaggio m
 
-**Firma digitale**
+**Schema Firma digitale**
 firmo l'hash del messaggio che ha dimensione ridotta
+- S algoritmo segreto
 - la destinazione non deve fare V(m)
 - non devo firmare un messaggio lungo
+
+**Schema con PARAMETRO segreto**
+- ripudiabile: sia bob che alice conoscono il segreto e quindi possono imbrogliare 
