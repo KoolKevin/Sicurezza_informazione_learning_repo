@@ -62,6 +62,8 @@ Obiettivo per la sicurezza dei dati: ci sono tre proprietà fondamentali da gara
 zerodium: azienda broker di vulnerabilità. Compra le vulnerabilità trovate da ricercatori/hobbyists e le rivende
 - crazy 
 
+classificazione ...
+
 Esempi di attacchi:
 - sniffing e snooping:
     - due tecniche di intercettazione di dati nella sicurezza informatica, spesso utilizzate per spiare le comunicazioni in una rete.
@@ -89,6 +91,109 @@ esempio interessante perchè fa vedere come un protocollo ben costruito ai fini 
 - presuppone che il client risponda correttamente (vulnerabiltà intrinseca ineliminabile del protocollo TCP)
 - se il client non risponde mai/ cambia il suo ip, il buffer del server può andare in overflow
 
+**minacce**:
+classificazione...
+
 
 **contromisure**:
 tradeoff: efficiacia/costo di implementazione
+
+classificazione...
+
+modello che rappresenta su 3 dimensioni le caratteristiche da considerare quando si progetta un sistema sicuro (strumenti == contromisure)
+- data una vulnerabilità quale contromisure e quali proprietà vanno garantite?
+- vulnerabilità durante trasmissione, memorizzazione ed elaborazione
+
+### Oltre CIA
+Autenticità del dato:
+- quando la destinazione riceve un dato, deve sapere l'identità di chi l'ha inviato
+- NB: chi invia il dato non è necessariamente chi lo ha prodotto
+- Autenticazione di chi ha inviato il dato: collegato strettamento a sopra; 
+
+NON ripudio:
+- chi riceve un dato non può appropriarsi della paternità
+- chi crea/invia un dato non può disconoscerne la paternità
+- il senso è che, a posteriori, sono in grado di attribuire con certezza chi ha creato/inviato il dato
+
+
+
+
+
+
+## Analisi del rischio
+
+
+
+### Fasi 
+
+...
+
+- analisi delle dipendenze di funzionamento: un pen-test può propagarsi sfruttando il grafo di dipendenze
+- rbac piuttosto che ibac
+- catagolazione degli eventi indesiderati: come faccio a sapere quali sono gli eventi indesiderati? cataloghi ben noti (XIRT)
+
+
+
+## IPOTESI FONDAMENTALE
+Ci concentriamo sulla sicurezza del dato presupponendo un **calcolatore sicuro**, cosa signifca?
+- hardware sicuro
+    - bisogna garantire integrità del sistema, controllare gli accessi e rilevare le manomissioni
+- SO sicuro
+
+
+Coprocessore
+- con memoria e processore
+- in cui vengono elaborate e salvate le informazioni sensibili (e.g. chiavi crittografiche)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+entriamo nel vivo del corso
+
+**Meccanismo vs Servizio**
+meccanismo: focalizzato su una contromisura per una vulnerabilità
+servizio: integra più meccanismi
+
+
+**Modello del canale insicuro**
+ambiente sicuro lato sorgente e destinazione del dato
+
+il canale di comunicazione è insicuro nel senso che una terza entità (che può essere sempre la sorgente/destinazione)
+
+**generazione, trasmissione, memorizzazione -> come fanno ad essere generazione e memorizzazione non sicure???**
+
+attacco passivo: non altera il flusso dei dati. Osserva solo il traffico dei dati
+attaco attivo: può alterare il flusso dei dati.
+
+
+...
+
+
+controllo dell'accesso al canale infattibile (non scalabile) se il canale è internet
+- cosa significa controllare l'accesso al canale? 
+
+una contromisura preventiva che vale sempre è il controllo dell'accesso 
+
+per attacchi attivi -> rilevazione
+per attacchi passivi -> prevenzione
+
+dove si collocano i meccanismi/servizi nella pila protocollare ISO/OSI?
+- livello 3: ipsec
+- livello 4: SSL
+- livello 7: a mano
+
+posizionarsi a livelli diversi fa differenza su trasparenza e personalizzazione della cifratura ad esempio
