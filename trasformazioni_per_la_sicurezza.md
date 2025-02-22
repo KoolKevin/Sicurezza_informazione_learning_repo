@@ -1,3 +1,48 @@
+**Modello del canale insicuro**
+"“al canale che connette una sorgente legittima ed una destinazione legittima può accedere illecitamente anche un intruso”
+- ambiente sicuro lato sorgente e destinazione del dato
+- il canale di comunicazione è insicuro nel senso che una terza entità (che può essere sempre la sorgente/destinazione) può accederci 
+
+### Attacchi passivi ed attacchi attivi
+attacco passivo: non altera il flusso dei dati. Osserva solo il traffico dei dati
+attaco attivo: può alterare il flusso dei dati.
+
+![alt text](immagini/attacchi_passivi_attivi.png)
+
+per attacchi passivi  
+- proprietà a rischio: riservatezza
+- contromisure: prevenzione tramite criptazione
+
+per attacchi attivi     
+- proprietà a rischio: integrità, autenticità
+- contromisure: rilevazione tramite attestati di integrità e di origine
+
+**OSS**: una contromisura preventiva che vale sempre è il controllo dell'accesso; tuttavia controllo dell'accesso al canale è infattibile (non scalabile) se il canale è internet (per questo modello del canale insicuro)
+
+
+dove si collocano i meccanismi/servizi nella pila protocollare ISO/OSI?
+- livello 3: ipsec
+- livello 4: SSL
+- livello 7: a mano
+
+posizionarsi a livelli diversi fa differenza su trasparenza e personalizzazione della cifratura ad esempio
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Abbiamo visto che sia nel caso di attacchi passivi che attivi i dati devono essere manipolati (criptati nel caso di attacchi passivi, affiancati ad un qualcosa che ne garantisca l'integrità nel caso di attacchi attivi). In altre parole, **i dati dalla sorgente alla destinazione devono essere trasformati**.
 
 Le trasformazioni per la sicurezza possono essere implementate con:
@@ -23,11 +68,38 @@ sicurezza perfetta non esiste; si parla solo di sicurezza computazionale
 
 
 ### Trasformazioni per l'integrità
+“la sorgente affianca al messaggio un “riassunto” che ne rappresenti in modo univoco il contenuto; la destinazione calcola il riassunto del messaggio ricevuto e lo confronta con quello inviato dalla sorgente ”
+
 non esiste una trasformazione preventiva, esiste una trasformazioni che rileva modifiche del contenuto del messaggio.
 - generazione di un attestato di integrità prodotto tramite hashing crittografico. Ha queste due proprietà
     - comportamento aleatorio (ogni hash ha la stessa probabilità di essere scelto)
     - resistenza alle collisioni
     - non invertibilie, è computazionalmente impossibile risalire ad *m* a partire da *H(m)*
+
+L’uscita di una funzione hash è detta
+riassunto o impronta (digest, fingerprint) del
+messaggio d’ingresso. Un’impronta di n bit
+(tipicamente nel range 128 ÷ 512) suddivide
+l’insieme di tutte le possibili stringhe d’ingresso
+in 2n
+ sottoinsiemi disgiunti, formati ciascuno da
+tutte e sole le stringhe che forniscono uguale h. 
+- Due stringhe che hanno lo stesso hash
+sono dette essere in collisione.
+
+Una funzione hash è detta semplice se
+l’individuazione di collisioni è un calcolo facile.
+
+Una funzione hash è detta sicura, o crittografica, se il suo comportamento è apparentemente aleatorio.
+Il modello a cui ci si fa riferimento è detto “oracolo casuale” e prevede che fornendo in ingresso un
+messaggio di cui non si conosce ancora l’impronta, si riscontra sull’uscita, con uguale probabilità, uno qualsiasi
+dei 2n
+ valori possibili. Gli algoritmi che approssimano tale comportamento impiegano un n “grande” per rendere
+estremamente improbabile che messaggi diversi abbiano la stessa impronta e rispettano la seguente regola.
+ R3 (resistenza alle collisioni): “l’individuazione di due messaggi con la stessa impronta è un calcolo difficile”. 
+
+
+
 
 basta l'hashing per garantire l'integrità? NOOO!!
 - cosi come l'intrusore può modificare il messaggio, esso può modificare anche l'hash
@@ -49,11 +121,16 @@ voglio garantire integrità e riservatezza
     - ricorda quello che succede in SSL
 
 
-### Trasformazioni per autenticazione
+
+
+
+### Trasformazioni per autenticazione/autenticità
 vogliamo verficare che l'origine del messaggio sia effettivamente quella del mittente
 
 abbiamo bisogno di un attestato di autenticità. 
 - nessuno può produrre le informazioni contenute nell'attestato se non la sorgente legittima
+
+"la sorgente aggiunge al documento informazioni non imitabili ed atte ad attestare chi l’ha predisposto; la destinazione verifica che il documento ricevuto sia stato originato proprio da chi dichiara di averlo fatto"
 
 Nuove trasformazioni
 - S(ign)
