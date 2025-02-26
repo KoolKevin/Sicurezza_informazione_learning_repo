@@ -149,3 +149,36 @@ firmo l'hash del messaggio che ha dimensione ridotta
 
 **Schema con PARAMETRO segreto**
 - ripudiabile: sia bob che alice conoscono il segreto e quindi possono imbrogliare 
+
+
+
+
+
+
+
+
+## Identificazione:
+- fondamentale per il controllo dell'accesso
+- si svolge necessariamente in real-time e **vale per un preciso istante di tempo** (la validità prolungata si ottiene affiancando al meccanismo di identificazione un altro (di autenticazione?))
+- verificando e verificatore devono essere entrambi online (sincrono)
+
+identificazione vs autenticazione:
+...
+
+strumenti di identificazione:
+...
+
+L'identificazione è il classico esempio in cui non basta una singola trasformazione
+- fase iniziale di registrazione
+    - si concorda un termine di paragone con cui l'identificatore può controllare la veridicità di ciò che il verificando gli manda
+- fase a regime in cui si avvia una sessione di identificazione
+    - 3 fasi -> 3 traformazioni
+    - trasformazione di dimostrazione non imitabile 
+
+
+
+
+
+
+
+### Funzioni unidirezionali e pseudo-unidirezionali
