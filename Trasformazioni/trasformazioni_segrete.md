@@ -5,6 +5,7 @@ Algoritmi segreti
 - come sopra
 
 **Algoritmi noti con parametri segreti**
+- capisci meglio cosa significa robustezza
 - se viene scoperto il parametro lo cambio e lascio il parametro
 
 ```
@@ -30,3 +31,48 @@ Algoritmi (un cifrario è un algoritmo di crittografia) a chiave
 **memorizzazione del parametro segreto**
 
 il segreto serve a cifrare, ma anch'esso dev'essere cifrato... come fare?
+
+
+Output cifrato con presenza di pattern ripetitivi da informazioni sfruttabili dall'intrusore
+- per questo motivo è importante che gli algoritmi crittografici producano un'uscita il più possibile aleatoria
+
+
+
+
+
+
+
+
+
+
+
+### Complessità computazionale
+...
+
+
+Nel contesto della sicurezza informatica devo considerare anche il caso migliore
+- bisogna adottare degli accorgimenti per evitare che l'intrusore si trovi di fronte ad istanze facili del problema
+- e.g. segreto con delle parti che sia ripetono
+
+
+**unità di misura di robustezza**:
+- Anno MIPS -> obsoleto
+- Livello di sicurezza (che nome è?) -> numero di operazioni per un'attacco di forza bruta
+
+128 bit minimo livello di sicurezza
+
+
+
+
+
+
+### Schema a 3 livelli di segreto
+se cifro tutto sono contento? No! Cifrare tutto con la stessa chiave da all'attancante un numero elevato di file cifrato con la stessa chiave -> facilito l'attacco
+
+- passphrase
+- master key, chiave con cui vado a cifrare le chiavi di cifratura dei file
+    - memorizzato in maniera sicura nel FS
+- chiavi di cifratura dei file
+    - memorizzato in maniera sicura nel FS
+
+RNG generano chiavi master e chiavi dei file
