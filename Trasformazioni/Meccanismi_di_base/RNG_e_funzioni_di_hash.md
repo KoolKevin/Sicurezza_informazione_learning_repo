@@ -80,3 +80,16 @@ Una seconda primitiva crittografica è la funzione hash sicura, chiamata in caus
 
 
 
+### Quanti bit deve avere un hash per essere sicuro?
+(i passaggi possono essere saltati)
+
+in questo contesto essere sicuro significa essere resistenti alle collisioni, sia debolmente che fortemente.
+
+- la probabilità di collisione scala con O(2^n) e quindi per garantire la resistenza debole mi bastano 128 bit
+    - bastano anche per la sicurezza forte?
+
+
+paradosso del compleanno (non sto fissando il giorno) <-> resistenza forte (non sto fissando l'hash)
+- è molto più facile attaccare la resistenza forte!
+
+**NB**: per la resistenza forte il numero di tentativi scala come O(2^(n/2)) -> l'impronta deve essere almeno 256 bit 
