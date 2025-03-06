@@ -39,7 +39,11 @@ posso dedurre però la lunghezza della chiave facendo ipotesi su ripetizioni che
 
 
 ### One-time pad
-Chiave lunga quanto la frase
+Chiave: 
+- lunga quanto il testo
+- usata una e una sola volta
+- assolutamente casuale
+
 
 
 - Inviolabile con attacco passivo dato che più ipotesi di decifrazione possono produrre un messaggio sensato 
