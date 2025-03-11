@@ -21,7 +21,7 @@ si prestano bene per garantire riservatezza. In linea di principio possono anche
 
 
 
-### Cifrari a flusso
+## Cifrari a flusso
 si rifà al one-time pad. 
 
 - genera un flusso di chiave (lungo quanto il testo) con un PRNG
@@ -69,7 +69,7 @@ rompere un cifrario a flusso è più facile rispetto rompere un cifrario a blocc
 
 
 
-### Cifrari a blocco
+## Cifrari a blocco
 cifrano blocchi di dimensione predefinita e non singoli bit alla volta
 - padding di nuovo presente (e sempre presente con anche un intero blocco di padding)
 
@@ -92,8 +92,53 @@ non adotta il modello di Feistel ma adotto anche lui sostituzione e trasposizion
 skip di roba.
 
 
-
 ## Modalità di cifratura | parte che interessa di più!
-un cifrario a blocchi non può essere utilizzato solo come visto fino ad adesso
+un cifrario a blocchi non può essere utilizzato solo come visto fino ad adesso (ECB)
+
+Usare ECB non va bene (in generale):
+- **determinismo di ECB**
+- **malleabilità di ECB**:
+    - se uso sempre la stessa chiave posso sostituire il blocco del destinatario con il blocco in cui sono io il destinatario
+- se il messaggio è molto piccolo (sta dentro ad un blocco) ECB va vene
+    - utilizzato per cifrare chiavi
+
+Altra considerazione sulle modalità di cifratura: **come si propagano gli errori?**
+- con ECB non si propaga (l'errore rimane confinato nel blocco modificato)
+
+Le altre modalità diverse da ECB hanno come obiettivo rendere aleatoria l'uscita della cifrazione, ovvero, dato lo stesso messaggio/blocco in chiaro non voglio ottenere lo stesso messaggio cifrato
 
 
+**LA MONTANARI CHIEDE GLI SCHEMI DELLE MODALITÀ DI CIFRATURA**
+
+**Cypher Block Chaining**:
+- pipeline
+- che caratteristiche deve avere il v_0? deve essere usato una e una sola volta altrimenti blocchi uguali appartenenti a messaggi in generale diversi vengono cifrati allo stesso modo. Inoltre deve essere casuale e imprevedibile
+    - per questi motivi i vettori di inizializzazione vengono generati con PRNG
+    - questo requisito non viene sempre rispettato (TLS/SSL)
+
+- efficienza
+    - in cifratura non parallelizzabile
+    - in decifatura è parallelizzabile
+
+- propagazione degli errori: 
+    - **in decifratura**, se un blocco viene alterato, si modifica solo il blocco seguente (vedi esempio)
+    - si propaga a tutti i blocchi successivi
+
+
+
+
+**Cypher Feedback e Output Feedback**:
+ricordano i cifrari a flusso (sincrono e autosincronizzante)
+
+
+nello schema OFB il vettore iniziale deve essere unico per DUE MOTIVI
+- uno per aleatorietà del cifrato
+- l'altro se no ricadiamo nel caso in cui si usa una chiave due volta (vedi xor dei cifrati) il che mina alla riservatezza del messaggio
+
+c'è propagazione dell'errore
+
+
+**counter**
+molto efficiente dato che è parallelizzabile
+
+non ho propagazione dell'errore
