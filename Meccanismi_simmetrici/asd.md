@@ -142,3 +142,35 @@ c'è propagazione dell'errore
 molto efficiente dato che è parallelizzabile
 
 non ho propagazione dell'errore
+
+
+# Beast attack
+si basa sulla prevedibilità del vettore di inizializzazione... ma non solo! L'attaccante deve poter:
+- intercettare il traffico
+- e iniettare dei pacchetti specifici nel flusso dati di una sessione già attiva
+- o, equivalentemente, induce la sorgente a cifrare una cosa che vuole lui (non facile)
+
+la vulnerabilità dipende da:
+- chiave formata da parte fissa e da parte variabile (vettore di inizializzazione pseudo-casuale)
+- ogni messaggio applicativo prevede un chiave diversa
+- ma nella frammentazione dei protocolli di trasporto, il singolo pacchetto viene cifrato in sequenza con gli altri utilizzando gli ultimi (8)byte del pacchetto precedente come vettore di inizializzazione per la cifratura del pacchetto corrente
+- **il vettore di inizializzazione non è più imprevedibile! Lo vedo...** 
+
+...
+
+il cifrato rimane uguale
+
+proprità dell'xor mi permettono di costruire un messaggio in chiaro opportuno che mi permette di risalire al passo 3 l'output del passso 2
+- se i due cifrati coincidono, la mia ipotesi di attaccante è corretta!
+
+
+
+A livello applicativo è tutto garantito! Ma i progettisti non hanno considerato la prevedibilità a livello di trasporto...
+
+
+
+
+### Paradosso del compleanno e cifrari a blocchi di 64 bit
+un cifrario a blocchi è sicuro se e solo se i blocchi hanno dimensione di 128 bit
+
+La probabilità che due blocchi di testo cifrato siano uguali scala con 2^(n/2)
