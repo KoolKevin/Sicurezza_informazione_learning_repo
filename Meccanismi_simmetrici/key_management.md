@@ -38,3 +38,23 @@ ho problemi se implemento in modalità ECB?
 
 
 - malleabilità
+
+attacco di replicabilità
+- con ECB e_k(A||B) diventa e_k(A)||e_k(B) se i blocchi sono allineati
+- se ho ottenuto la stessa chiave k da una sessione precedente posso spacciarmi per A
+
+
+**confronto con protocolo 4-way**
+- 4 way invia un messaggio in meno tra i due interlocutori
+- 4 way effettua due operazioni di decifratura in più rispetto alle 0 si 5-way
+- A di 4 way fa una decifratura in meno
+- B di 4 way fa una decifratura in meno
+
+con ECB cosa succede?
+- se non si tiene traccia delle chiavi già usate I può indurre B a riusare una chiave che lui conosce da una sessione precedente
+
+
+
+
+### Accordo DH
+non preconcordiamo prima un segreto (master key), lo concordiamo online sul momento
