@@ -57,4 +57,18 @@ con ECB cosa succede?
 
 
 ### Accordo DH
-non preconcordiamo prima un segreto (master key), lo concordiamo online sul momento
+Lo scambio di chiavi Diffie-Hellman è un protocollo che permette a due utenti di scambiarsi una chiave segreta comunicando pubbicamente, senza rivelare la chiave segreta a degli attaccanti. 
+- non preconcordiamo prima un segreto (master key), lo concordiamo online sul momento
+- non c'è più bisogno di un accordo con cui cifrare le chiavi con cui comunichiamo, possiamo scambiare la chiave di sessione in maniera intelligente direttamente
+
+I due partecipanti:
+- concordano un numero casuale iniziale (possibilmente grande e primo in modo da annullare gli attacchi di forza bruta -> conseguenza di esponenziazione modulare) 
+    - Per concordare un numero devono comunicarselo e quindi renderlo pubblico
+    - Questo numero non può quindi essere la chiave
+- Tuttavia, i due partecipanti generano anche un numero casuale segreto (e quindi distinto) che sarà una sorta di "chiave segreta personale"
+- Chiaramente, non possiamo comunicare direttamente questi due nuovi numeri casuali, altrimenti saremmo punto e a capo. Tuttavia, se comunicassimo non direttamente le chiavi segrete, ma il **risultato di un operazione non facilmente reversibile** di quest'ultime con il primo numero casuale condiviso:
+    - le chiavi segrete non verrebbero comunicate in quanto mascherate dall'operazione non reversibile
+    - se l'operazione ha delle proprietà particolari (esponenziazione modulare), i due interlocutori **possono generare la stessa identica chiave di sessione** a partire solamente dai risultati dell'operazione non reversibile e quindi **senza mai essersi scambiati pubblicamente i loro segreti!**
+        - ripeto per la terza volta: è fondamentale che l'operazione sia non reversibile, altrimenti un attaccante in ascolto potrebbe recuperare la chiave segreta di un interlocutore a partire dal risultato dell'operazione tra segreto e numero casuale concordato. 
+
+**OSS**: D-H classico è vulnerabile agli attacchi Man-in-the-Middle se non viene autenticato. Per questo spesso viene combinato con altri meccanismi di autenticazione, come certificati digitali o firme crittografiche.
