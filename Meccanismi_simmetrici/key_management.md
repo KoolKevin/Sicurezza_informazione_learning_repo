@@ -71,4 +71,6 @@ I due partecipanti:
     - se l'operazione ha delle proprietà particolari (esponenziazione modulare), i due interlocutori **possono generare la stessa identica chiave di sessione** a partire solamente dai risultati dell'operazione non reversibile e quindi **senza mai essersi scambiati pubblicamente i loro segreti!**
         - ripeto per la terza volta: è fondamentale che l'operazione sia non reversibile, altrimenti un attaccante in ascolto potrebbe recuperare la chiave segreta di un interlocutore a partire dal risultato dell'operazione tra segreto e numero casuale concordato. 
 
+... se vuoi capire più nel dettaglio riguardati il video del tipo coi cubi
+
 **OSS**: D-H classico è vulnerabile agli attacchi Man-in-the-Middle se non viene autenticato. Per questo spesso viene combinato con altri meccanismi di autenticazione, come certificati digitali o firme crittografiche.
