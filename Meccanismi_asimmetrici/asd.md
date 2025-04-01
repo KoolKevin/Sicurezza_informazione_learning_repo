@@ -60,3 +60,65 @@ terza alternativa è un aggravio inutile
 
 La POP serve ad ottenere non ripudiabilità!
 
+
+
+
+
+
+
+
+## Revoca di un certificato
+...
+
+i certificati hanno una scadenza imposta dalla CA al momento del suo rilascio
+- tuttavia, i certificati hanno anche uno stato di revoca (i.e. relativa chiave privata compromessa)
+
+**modello pull/push**
+modelli con cui si distribuisce agli utenti l'informazione sullo stato di revoca di un certificato
+- modello pull è quello effettivamente utilizzato 
+- modello push più complicato (complessità di un sistema di gestione degli eventi)
+
+
+
+### CRL
+una lista di revoca è una struttura dati analaga ad un certificato in quanto firmata dalla CA
+- contiene l'indicazione dei certificati revocati
+- tutto quello firmato prima della data di revoca deve essere considerato valido, e viceversa
+- this update date e next update date identificano un intervallo temporale di validità della lista di revoca
+- CRL extensions: informazioni aggiuntive utili a livello applicativo, non necessariamente bisogna garantirne autenticità e integrità
+    - e.g. ragione di revoca
+
+vantaggio: CRL funziona anche offline data la validità temporale
+svantaggio: non garantiscono la freschezza delle informazioni! Se avviene una revoca in mezzo all'intervallo di tempo, non me ne accorgo fino al prossimo
+- limite: non garantisce mai freschezza in tempo reale per quanto io diminuisca l'intervallo di validità
+
+
+...
+
+
+Nel caso di CRL a sottoliste, posso mettere in una estensione del certificato la sottolista in cui sarà contenuta l'informazione sulla sua informazione di revoca. 
+
+il campo estensioni della CRL mi dice se una determinata CRL è una delta CRL, base CRL, sotto lista, ecc...
+
+
+
+### OCSP
+protocollo client-server che data una richiesta mi risponde con lo stato di revoca di un certificato (tutto firmato)
+
+il server può avvalersi di liste di revoca ...
+- non cambia nulla dal punto di vista della freschezza 
+
+... come non
+- può (non è detto) supportare una verifica in tempo reale (massima freschezza)
+
+
+
+timeliness == tempestività della notifica di revoca 
+
+
+
+
+
+
+### Domini di fiducia
+per recuperare certificati di altre CA devo recuperare il cammino dei certificati
