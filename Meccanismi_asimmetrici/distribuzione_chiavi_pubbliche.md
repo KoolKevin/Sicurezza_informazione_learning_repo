@@ -5,9 +5,13 @@ abbiamo visto con i cifrari simmetrici come le chiavi si:
 
 i cifrari simmetrici abbiamo visto essere impiegati più per la riservatezza che per l'autenticazione. I cifrari asimmetrici il contrario
 
+**importante**: 
+La conoscenza di PU è una condizione necessaria, ma non sufficiente, per proteggere la riservatezza di un messaggio da inviare a U o per attribuire a U la paternità di un documento firmato con SU.
+- Chi usa PU ad un’estremità del canale è, infatti, ben consapevole che all’altra estremità è stata o dovrà essere impiegata la chiave SU, ma **non ha alcuna garanzia che la coppia di numeri SU, PU sia proprio dell’utente di nome U** e non di un impostore che vuole spacciarsi per U. 
+- In queste condizioni il pericolo è grosso: si può, infatti, o inviare ad un intruso informazioni riservate destinate solo ad U, o accettare come originate da U informazioni false predisposte dall’intruso. 
+
+
 ### prima cosa: come distribuiamo le chiavi pubbliche? di che cosa ci dobbiamo preoccuare
-
-
 come abbiamo visto, la chiave pubblica serve a chi vuole comunicare con colui che ha la chiave privata
 - cifrando i messaggi che vuole inviargli
 - verificando la sua firma
@@ -122,3 +126,44 @@ timeliness == tempestività della notifica di revoca
 
 ### Domini di fiducia
 per recuperare certificati di altre CA devo recuperare il cammino dei certificati
+
+
+
+
+
+quando un utente si registri presso una CA
+- sicuramente nel certificato che riceve è contenuta la chiave pubblica della CA in cui si è registrato
+- inoltre, ottiene anche le chiavi pubbliche di altre CA delle quali la CA presso cui si è registrato
+- in particolare, assumiamo che un utente oltre alla chiave pubblica della sua CA abbia anche la chiave pubblica della ROOT CA del suo dominio
+    - in questa maniera, un utente può cercare certificati di altre CA partendo dalla radice
+
+**Cross certificate**: certificato che contiene chiavi pubbliche di altre CA
+- i cross-certficate seguono le stesse regole dei normali certificati (integrità, autenticità, validità temporale e stato di revoca)
+    - AuthorityRevocationList al posto di CRL
+    - una CA emette una CRL per i user-certificates, ed una ARL per i cross-certificate
+
+
+### Conclusioni
+alla base di un qualsiasi cifrario asimmetrico vi è per forza dietro una PKI
+- fondamentale, altrimenti le chiavi pubbliche non sono dotate di autenticità
+- in realtà, esistono anche altre tecnologie alternative che permettono di fornire di autenticità le chiavi pubbliche
+
+Quand'è che un prodotto commerciale si può considerare una infrastruttura a chiave pubblica?
+- fa tutte le cose che ci sono in slide 35
+
+
+**DH anonimo**
+piccola estensione di Diffie-Hellman in cui aggiungo un PRNG che mi permette di cambiare dinamicamente la chiave
+- il problema riguardo l'autenticazione dell'Y però rimane
+- la minaccia è che si concordi una chiave segreta con un Man in the middle
+
+Per risolvere posso usare una PKI
+- i certificati emessi contengono i parametri DH (p, g, Y) di cui voglio garantire l'autenticità al posto della chiave pubblica del mio corrispondente
+    - questo meccanismo evita che alice concordi con un MIM la stessa chiave, tuttavia siccome manca identificazione c'è il rischio che io mandi dei campioni di testo cifrato ad una persona diversa da BOB (il certificato è pubblico)
+    - poco male siccome l'attaccante non può concordare la stessa chiave con cui decifrare i dati (capisci meglio perchè)
+- oppure, ephemeral DH
+
+**NOTA**: è importante distinguere il requisito di autenticazione da quelle di identificazione
+- il primo richiede che i messaggi che arrivano siano effettivamente appartenenti a Bob
+- il secondo mi richiede che i messaggi che arrivano siano stati mandati proprio da Bob 
+
