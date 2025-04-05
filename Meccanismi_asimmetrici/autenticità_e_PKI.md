@@ -272,9 +272,10 @@ Per risolvere posso usare una PKI
 - i certificati emessi contengono i parametri DH (p, g, Y) di cui voglio garantire l'autenticità al posto della chiave pubblica del mio corrispondente
     - questo meccanismo evita che alice concordi con un MIM la stessa chiave, tuttavia siccome manca identificazione c'è il rischio che io mandi dei campioni di testo cifrato ad una persona diversa da BOB (il certificato è pubblico)
     - poco male siccome l'attaccante non può ottenere la stessa chiave con cui decifrare i dati siccome non ha la chiave segreta (X_bob) 
+   
 - oppure, ephemeral DH
     - **NB**: il segreto X viene ricalcolato ogni volta e di conseguenza cambia anche la chiave DH pubblica Y
-    -  
+    - ho PERFECT-FORWARD-SECRECY ma sono più pesante
 
 Fixed DH: “Ti mando un biglietto con la mia chiave DH stampata sopra, firmato da un notaio (la CA)”.
 
