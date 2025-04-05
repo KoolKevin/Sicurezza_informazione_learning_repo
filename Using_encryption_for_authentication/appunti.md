@@ -1,3 +1,5 @@
+A quanto pare qua si parla più di identificazione che di autenticazione
+
 ### Encryption Algorythms
 With a conventional encryption algorithm, such as DES, the same key is used for both encryption and decryption. Authentication depends upon the two participants in a conversation **being the only two principals who know the key** that is being used to encrypt the transmitted material. 
 - so che sei effettivamente chi dici di essere dato che l'unico che può criptare in questo modo è l'unica altra persona con la chiave segreta
