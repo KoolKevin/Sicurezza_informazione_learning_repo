@@ -273,13 +273,20 @@ Per risolvere posso usare una PKI
     - questo meccanismo evita che alice concordi con un MIM la stessa chiave, tuttavia siccome manca identificazione c'è il rischio che io mandi dei campioni di testo cifrato ad una persona diversa da BOB (il certificato è pubblico)
     - poco male siccome l'attaccante non può ottenere la stessa chiave con cui decifrare i dati siccome non ha la chiave segreta (X_bob) 
 - oppure, ephemeral DH
+    - **NB**: il segreto X viene ricalcolato ogni volta e di conseguenza cambia anche la chiave DH pubblica Y
+    -  
+
+Fixed DH: “Ti mando un biglietto con la mia chiave DH stampata sopra, firmato da un notaio (la CA)”.
+
+Ephemeral DH: “Ti mando una chiave DH generata al volo e ci metto la mia firma elettronica; allego il mio certificato per dimostrarti che quella firma è mia”.
+
+in sostanza fixed autentica la chiave DH pubblica inserendola direttamente in un certificato, mentre ephemeral autentica la chiave pubblica DH firmandola con una sua chiave privata e condividendo un certificato che autentica la relativa chiave pubblica
 
 ...
 Per evitare di avere sempre lo stesso segreto condiviso, anche se il pre_master_secret è statico, si aggiunge entropia nuova ad ogni sessione con:
 - R_C: nonce (numero casuale) generato dal client
 - R_S: nonce generato dal server
-
-Questi due valori sono scambiati in chiaro, ma vengono usati in una funzione hash, come parte di un algoritmo tipo:
+- Questi due valori sono scambiati in chiaro
 
 **NOTA**: è importante distinguere il requisito di autenticazione da quelle di identificazione
 - il primo richiede che i messaggi che arrivano siano effettivamente appartenenti a Bob
