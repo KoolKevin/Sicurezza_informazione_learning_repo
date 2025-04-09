@@ -78,6 +78,7 @@ schema di firma con recupero e schema con appendice
 
 5 requisiti:
 - di nuovo i termini identificazione e autenticazione mi risultano ambigui. Qua il primo requisito riguarda autenticazione del firmatario e quindi cio che lo garantisce è una PKI
+- in questo caso, senza certificazione, la firma consente a chiunque di identificare univocamente NON il firmatario, piuttosto la chiave segreta utilizzata
 - ricorda che identificazione ha un aspetto istantaneo
 
 
