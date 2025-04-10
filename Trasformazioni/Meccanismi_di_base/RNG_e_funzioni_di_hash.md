@@ -18,7 +18,8 @@ In sostanza i bit che formano la stringa devono essere casuali ed imprevedibili.
 
 **NB**: Per verificare l'effettiva casualità di una sequenza di bit sono stati definiti diversi test statistici. 
 
-
+Assenza di Casualità: in pratica dopo un po' si ripete.
+Prevedibilità: riesco a capire il prossimo numero casuale
 
 ### TRNG
 **Come si ottiene casualità?**
