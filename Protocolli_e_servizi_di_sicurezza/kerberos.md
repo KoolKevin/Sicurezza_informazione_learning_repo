@@ -3,6 +3,9 @@ nato nel 1980
 protocollo inizialmente con 3 obiettivi ma di fatto è **rimasto solo l'obiettivo di autenticazione**
 
 non da sapere a memoria, ma bisogna saperci ragionare sopra
+- per quale motivo ci sono i timestamp?
+- perchè c'è l'autenticatore
+- ecc...
 
 non è un'autenticazione federata, ma fortemente centralizzata
 
