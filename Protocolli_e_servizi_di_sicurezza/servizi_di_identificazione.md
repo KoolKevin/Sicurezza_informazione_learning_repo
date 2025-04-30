@@ -54,13 +54,44 @@ se il nonce è prevedibile l'attaccante può sosituirsi a B e farsi mandare H(S 
 esempio non robusto
 - tengo due sessioni attive
 
-foto sul telefono
+**attacco di interleaving**
+apro due sessioni contemporanee con due entità diverse
+
+
+**Attacco di reflection**
+apro due sessioni contemporanee con la stessa entità
 
 
 
 
 
-### PARLEREMO DI VPN?
+### qual'è il motivo alla base della non sicurezza del protocollo di identificazione mutua che abbiamo visto
+1. c'è una forte simmetria tra i messaggi che A e B si mandano a vicenda
+2. l'intrusore può rispondere con un ritardo rispetto a quando gli è stata fatta la sfida (aspetto di recuperare in qualche modo la risposta giusta)
+    - non c'è un timestamping che limita la validità temporale dei messaggi
+3. mancano dei legami tra i messaggi che mi consentono di collegare, ad esempio, una risposta ad una sfida
 
 
+
+Contromisure qualitative:
+- numeri random sicuri
+- numeri di sequenza per collegare i messaggi
+- timestamping
+
+vengono usate in combinazione per eliminare i svantaggi
+
+
+analogamente ai protocolli di autenticazione in cui si combina
+- quello che sono
+- quello che conosco
+- ...
+
+
+
+
+
+
+protocollo di identificazione = real time
+- per mantenere l'identità dell'entità identificata nel tempo occorre **affiancare ai protocolli di identificazione, dei protocolli di autenticazione**
+    - e.g. utilizzare degli HMAC dopo l'identificazione
 

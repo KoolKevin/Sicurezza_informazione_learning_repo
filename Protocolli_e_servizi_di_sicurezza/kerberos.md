@@ -1,0 +1,64 @@
+nato nel 1980
+
+protocollo inizialmente con 3 obiettivi ma di fatto è **rimasto solo l'obiettivo di autenticazione**
+
+non da sapere a memoria, ma bisogna saperci ragionare sopra
+
+non è un'autenticazione federata, ma fortemente centralizzata
+
+
+
+
+
+**ragionamenti generali**
+- dove posiziono il servizio di autenticazione?
+    - sulle workstation?
+        - le workstation devono tenere traccia della prova di entità dell'utente
+        - ci deve essere una relazione di fiducia tra le workstation e i server 
+            - e devono essere /tolte se vengono aggiunte/tolte delle workstation/server
+        - ci può stare se ci sono poche macchine e quindi l'aggravio ammistrativo del sistema è basso
+    - sui server?
+        - uhm, stesso problema in realtà
+
+
+**Idea**:
+non ha senso distribuire su tutte le macchine le funzionalità di autenticare gli utenti, utilizziamo un unico server di autenticazione centralizzato a parte.
+
+relazione di fiducia tra i server ed il server di autenticazione.
+- I server accettano tutti i messaggi autenticati dal server di autenticazione
+
+
+
+
+
+
+Kerberos fa uso di sola crittografia simmetrica per garantire autenticità
+
+
+
+dopo essersi identificato (con l'AS), il cliente ottiene un ticket, ovvero una prova di identità, con cui può protrarre autenticare le sue successive richieste ai servizi
+- i clienti precondividono con AS i loro segreti che usano per identificarsi
+- i servizi precondividono con AS le loro chiavi con cui verrà cifrato il ticket usato per l'autenticazione
+
+
+
+
+
+primo problema: protocollo passivo. Un primo miglioramento è quindi rendere attiva l'identificazione
+
+
+
+obiettivo: identificazione col fine di autenticazione per l'accesso a dei servizi
+- anche più volte, non voglio riidentificarmi ogni volta che voglio accedere ad un servizio
+- voglio riutilizzare più volte lo stesso ticket
+
+
+
+
+spezziamo le due funzionalità in due servizi separati
+- authentication server: identifica (attivamente)
+- ticket-granter server: rilascia ticket agli utenti identificati da AS
+    - AS e TGS devono avere una relazione di fiducia quindi
+    - cosa significa questo se stiamo utilizzando meccanismi simmetrici? AS e TGS precondividono una chiave
+
+ 
