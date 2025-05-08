@@ -64,4 +64,33 @@ spezziamo le due funzionalità in due servizi separati
     - AS e TGS devono avere una relazione di fiducia quindi
     - cosa significa questo se stiamo utilizzando meccanismi simmetrici? AS e TGS precondividono una chiave
 
- 
+
+
+... mi sono stancato, altra roba 
+
+- **AUTENTICATORE, associa il ticket al suo legittimo possessore** 
+    - concetto utile da generalizzare
+    - ad esempio: non basta presentare un certificato, ma devo anche dimostrare di esserne il legittimo proprietario
+
+
+...
+
+
+
+**NB**: Kerberos NON è una sistema di distribuzione delle chiavi. Per certi versi assomiglia in quanto l'AS è centrale, tuttavia esso autentica gli utenti non distribuisce le chiavi. Le chiavi che entrano in gioco in questo servizio devono essere **predistribuite**.
+
+
+Lo scenario deve essere esteso anche quando richiedo accesso ad un servizio appartenente ad un altro dominio (detto anche reame in kerberos)
+- fino ad adesso un utente ha sempre interagito con il proprio AS e TGS
+- il mio TGS a questo punto può darmi un ticket per interagire con un TGS remoto il quale si fida di lui
+
+ricorda: **come si creano delle relazioni di fiducia?**
+- o con dei certificati (cross certification)
+- o nel caso di kerberos con delle chiavi precondivise
+
+
+
+scalabilità
+- quante chiavi devono essere predistribuite all'AS se ci sono n-utenti?
+    - n in un solo dominio
+    - n^2 se voglio più domini 
