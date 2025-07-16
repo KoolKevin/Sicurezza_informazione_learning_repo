@@ -35,6 +35,6 @@ The last block is then padded with extra garbage bits so that it also has 256 bi
 10. Which Is Best? One isn't necessarily better than the other. Stream ciphers are typically used when a stream of data must be encrypted bit by bit. For example, when encrypting a stream of video data in transit. Block ciphers are more typically used on static data, things like passwords in a password manager
 
 
-
+11. What's an IV? An IV, or initialization vector, is a random value that is used to initialize a block cipher. It is used to ensure that the same plaintext always encrypts to a different ciphertext. Without an IV, the same plaintext would always encrypt to the same ciphertext which is a big security vulnerability.
 
 
