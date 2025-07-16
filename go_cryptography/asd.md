@@ -16,3 +16,25 @@
 
 6. Most production ciphers are not perfectly secure, but are "close enough". In short, trade-offs are made that add to the practical security of the system while sacrificing the perfect theoretical security of the cipher itself.
     - The big problem with the One Time Pad is that the key needs to be the same length as the message. That means to encrypt a 128 GB hard drive, I'd need a 128 GB key!! That's just not practical.
+
+7. A stream cipher is a symmetric key cipher where plaintext digits are combined with a key stream. In a stream cipher, each plaintext digit is encrypted one at a time with the corresponding digit of the keystream, to give a digit of the ciphertext stream.
+    - operating one digit at a time reduces memory usage, since we don't need to hold all of the plaintext or key in memory
+    - examples of stream ciphers are: RC4, Salsa20
+
+8. A block cipher is a deterministic algorithm that operates on fixed-length groups of data, called blocks. Like stream ciphers, block ciphers are a kind of symmetric encryption. Block ciphers use fixed-size blocks and fixed-size keys to encrypt/decrypt variable size data. Block ciphers can operate on messages of any length (thanks to chunking and padding), and the key doesn't even need to be the same length as the message or the block.
+    - examples of block ciphers are: AES, DES
+
+9. Messages in a block cipher are broken up into blocks, and each block is encrypted separately. For example, let's say we are using a cipher that requires 256-bit blocks. We have a message of 650 bits that we want to encrypt. The algorithm would break that message up into three blocks:
+
+    block1 = first 256 bits
+    block2 = next 256 bits
+    block3 = last 138 bits
+
+The last block is then padded with extra garbage bits so that it also has 256 bits of data. That padding is stripped off when the message is decrypted.
+
+10. Which Is Best? One isn't necessarily better than the other. Stream ciphers are typically used when a stream of data must be encrypted bit by bit. For example, when encrypting a stream of video data in transit. Block ciphers are more typically used on static data, things like passwords in a password manager
+
+
+
+
+
