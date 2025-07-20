@@ -37,4 +37,6 @@ The last block is then padded with extra garbage bits so that it also has 256 bi
 
 11. What's an IV? An IV, or initialization vector, is a random value that is used to initialize a block cipher. It is used to ensure that the same plaintext always encrypts to a different ciphertext. Without an IV, the same plaintext would always encrypt to the same ciphertext which is a big security vulnerability.
 
+12. RSA is relatively slow. Because of this, it is not commonly used to directly encrypt user data. More often, RSA is used to **transmit shared keys for symmetric-key cryptography**, as it does in TLS/HTTPS.
 
+13. At the end of the day, p, q, tot and d should all be kept secret, there's no reason to share anything other than (n, e).
