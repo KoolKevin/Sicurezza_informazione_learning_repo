@@ -1,38 +1,3 @@
-**Modello del canale insicuro**
-“al canale che connette una sorgente legittima ed una destinazione legittima può accedere illecitamente anche un intruso”
-- ambiente sicuro lato sorgente e destinazione del dato
-
-### Attacchi passivi ed attacchi attivi
-attacco passivo: non altera il flusso dei dati. Osserva solo il traffico dei dati
-- attacco alla confidenzialità (**intercettazione**/sniffing) 
-attaco attivo: può alterare il flusso dei dati.
-- attacco alla disponibilità (**interrompo** il flusso di dati)
-- attacco alla integrità (**modifico** i dati nel flusso)
-- attacco alla autenticità (**fabbrico** dei dati e gli spaccio come prodotti da un'altra sorgente)
-
-![alt text](immagini/attacchi_passivi_attivi.png)
-
-per attacchi passivi  
-- proprietà a rischio: riservatezza
-- contromisure: prevenzione tramite criptazione
-
-per attacchi attivi     
-- proprietà a rischio: integrità, autenticità
-- contromisure: rilevazione tramite attestati di integrità e di origine
-
-**OSS**: una contromisura preventiva che vale sempre è il controllo dell'accesso; tuttavia controllo dell'accesso al canale è infattibile (non scalabile) se il canale è internet (per questo modello del canale insicuro)
-
-dove si collocano i meccanismi/servizi nella pila protocollare ISO/OSI?
-- livello 3: ipsec
-- livello 4: SSL
-- livello 7: a mano
-
-posizionarsi a livelli diversi fa differenza su trasparenza e personalizzazione della cifratura
-
-
-
-
-
 ## TRASFORMAZIONI PER LA SICUREZZA
 Le vulnerabilità del canale insicuro possono essere risolte da una contromisura in linea di principio molto semplice:
 ```

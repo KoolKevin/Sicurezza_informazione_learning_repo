@@ -151,17 +151,24 @@ Interessante il modello che rappresenta su 3 dimensioni le caratteristiche da co
 
 ### Oltre CIA
 **Autenticazione dell'utente e del dato** (ricadono nell'unico termine autenticazione):
-- quando la destinazione riceve un dato, deve sapere l'identità di chi l'ha inviato (autenticazione del dato)
+- autenticazione del dato come associazione tra dato e mittente del dato
+    - quando la destinazione riceve un dato, deve sapere l'identità di chi l'ha inviato 
     - NB: chi invia il dato non è necessariamente chi lo ha prodotto
-- Autenticazione di chi ha inviato il dato intesa come meccanismo del controllo dell'accesso al canale di invio
+- Autenticazione dell'utente che ha inviato il dato intesa come meccanismo del controllo dell'accesso al canale di invio
     - strettamente collegato a sopra
-    - deve esistere una lista degli utenti (o dei gruppi di utenti) potenziali ed un servizio per l’identificazione sicura degli utenti; 
+    - deve esistere una lista degli utenti (o dei gruppi di utenti) potenziali ed un servizio per **l’identificazione** sicura degli utenti; 
 
 **NON ripudio**:
 - chi riceve un dato non può appropriarsi della paternità / non gli si può attribuire la paternità
 - chi crea/invia un dato non può disconoscerne la paternità
 - il senso è che, a posteriori, sono in grado di attribuire con certezza chi ha creato/inviato il dato (es. contratto di acquisto di una casa)
 
+
+- la confidenzialità, o meglio la riservatezza dell’informazione alle volte è richiesta ed alle volte no;
+- l’integrità è invece quasi sempre critica ed indica che l’informazione è completa e non corrotta;
+- la disponibilità riguarda la possibilità di accedere ad una certa informazione ed è critica solo in certi momenti
+- per certi servizi; l’attacco intenzionale alla disponibilità è detto negazione del servizio (denial of service);
+- l’autenticità, o genuinità, di un informazione è critica quando occorre individuare con certezza chi l’ha originata; l’attacco intenzionale all’autenticità è detto falsificazione (fabrication, vedi trasformazioni per la sicurezza);
 
 
 
@@ -199,3 +206,53 @@ Interessante l'uso di un Coprocessore:
 
 - Servizi di sicurezza: che sfruttano in generale più meccanismi per proteggere una o più proprietà critiche dell’informazione
     - integrano più meccanismi
+
+
+
+
+## Modello del canale insicuro
+In questo corso consideriamo solo **attacchi intenzionali** e accidentali/disastri:
+
+Per classificare le modalità d’attacco, le proprietà minacciate e le contromisure con cui difenderle, è utile introdurre il modello **Modello del canale insicuro**:
+```
+    “al canale che connette una sorgente legittima ed una destinazione legittima può accedere illecitamente anche un intruso”
+```
+- ambiente sicuro lato sorgente e destinazione del dato
+
+### Attacchi passivi ed attacchi attivi
+attacco passivo: 
+- non altera il flusso dei dati. **Osserva solo il traffico dei dati**
+- attacco alla confidenzialità (**intercettazione**/sniffing) 
+
+attaco attivo: p**uò alterare il flusso dei dati**.
+- attacco alla disponibilità (**interrompo** il flusso di dati)
+- attacco alla integrità (**modifico** i dati nel flusso)
+- attacco alla autenticità (del dato) (**fabbrico** dei dati e gli spaccio come prodotti da un'altra sorgente)
+
+![alt text](Trasformazioni/immagini/attacchi_passivi_attivi.png)
+
+Il tipo di attacco **influisce sul tipo di contromisura che occorre adottare**:
+- l’attacco passivo è difficile da rilevare e la difesa deve essere quindi basata sulla prevenzione;
+- l’attacco attivo è difficile da prevenire ed occorre quindi basare la difesa su rilevazione e reazione. 
+
+per attacchi passivi  
+- proprietà a rischio: riservatezza
+- contromisure: prevenzione tramite criptazione
+
+per attacchi attivi     
+- proprietà a rischio: integrità, autenticità
+- contromisure: rilevazione tramite attestati di integrità e di origine
+
+**OSS**: una contromisura preventiva che vale sempre è il controllo dell'accesso; tuttavia controllo dell'accesso al canale è infattibile (non scalabile) se il canale è internet (per questo modello del canale insicuro)
+
+
+
+
+
+### Dove si collocano i meccanismi/servizi nella pila protocollare ISO/OSI?
+tre possibilità:
+- livello 3: ipsec
+- livello 4: SSL
+- livello 7: a mano dentro l'applicazione
+
+posizionarsi a livelli diversi fa differenza su trasparenza e personalizzazione della cifratura
