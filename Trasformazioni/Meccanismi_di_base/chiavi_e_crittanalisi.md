@@ -77,7 +77,7 @@ Le proprietà di sicurezza della chiave pubblica PU sono due:
 
 
 ## Crittanalisi
-Un'attaccante può provare a fare tre cose con le chiavi:
+Un'attaccante può provare a fare tre cose quando non ha una chiave:
 1. Indovinare
 2. Intercettare
 3. Dedurre
@@ -104,7 +104,7 @@ Per valutare la sicurezza di questa soluzione, consideriamo il caso di una memor
 - R17: ”P deve poter decifrare s solo se il proprietario gli comunica la chiave che ha scelto per cifrarla; una volta usato il testo in chiaro s, P deve cancellarlo accuratamente dalla sua memoria di lavoro ”
 
 il segreto serve a cifrare, ma anch'esso dev'essere cifrato siccome va memorizzato... come fare?
-- si utilizza una chiave di secondo livello *u* per cifrare le chiavi di secondo livelli
+- si utilizza una chiave di secondo livello *u* per cifrare le chiavi di primo livello
 - da un lato *u* deve essere casuale, da un altro lato facilmente imparabile a memoria siccome non viene memorizzata
 - Entrambe le proprietà vengono di norma conseguite impiegando l’impronta di una frase, la cosiddetta passphrase, che l’utente impara a memoria e comunica al processore su un canale protetto. 
 
@@ -113,24 +113,26 @@ Output cifrato con presenza di pattern ripetitivi da informazioni sfruttabili da
 
 In un file system sicuro, un utente ha, infatti, la necessità di gestire una **gerarchia di tre dati segreti**.
 
-- Al primo livello della gerarchia dei segreti c’è la **pass phrase** che l’utente deve imparare a memoria e che impiega per accedere ai segreti di secondo livello. Il meccanismo chiamato in causa è la funzione hash.
+- Al primo livello della gerarchia dei segreti c’è la **pass phrase** che l’utente deve imparare a memoria e che impiega per decifrare i segreti di secondo livello (accesso al portachiavi). Il meccanismo chiamato in causa è la funzione hash.
 
-- Al secondo livello ci sono, cifrate dalla pass phrase, le chiavi (in generale sono più di una) che l’utente impiega per accedere alle chiavi che proteggono la riservatezza dei documenti riservati di terzo livello. La memoria per le chiavi che cifrano chiavi è un file, usualmente detto portachiavi
+- Al secondo livello ci sono, cifrate dalla pass phrase, le chiavi (in generale sono più di una) che l’utente impiega per accedere alle chiavi di cifratura dei file. Ovvero le chiavi alle chiavi che proteggono la riservatezza dei documenti riservati di terzo livello. La memoria per le chiavi che cifrano chiavi è un file, usualmente detto **portachiavi**
 (keyring). In questo servizio sono coinvolti un RNG ed un cifrario simmetrico.
 
-- Al terzo livello ogni file è cifrato/decifrato con una chiave del portachiavi scelta di volta in volta dal RNG 
+- Al terzo livello vi sono le chiavi di cifrazione dei file. Ogni file è cifrato/decifrato con una chiave del portachiavi scelta di volta in volta dal RNG 
+
+
+Posizione della memoria contenente la chiave cifrata:
+- Hard Disk: poco sicuro perché lo stesso calcolatore può essere usato da più utenti;
+- Memory Card: la si inserisce nel sistema solo quando vi è necessità del dato segreto;
+- Smart Card: molto sicura, consiste nell’avere un calcolatore portatile con una sua memoria contenente s cifrata, a cui sistema invia file x ed ottiene il file cifrato y, in questo modo s non esce mai dal suo ambiente protetto.
 
 
 ### Dedurre
-Per gli attuali meccanismi crittografici l’impossibilità di deduzione è sempre verificata. Un accorgimento ha
-un ruolo fondamentale nell’ottenimento di “robustezza” agli attacchi:
-“il legame tra il testo in chiaro ed il testo cifrato deve essere così ben nascosto da far apparire quest’ultimo
-all’intruso come una variabile aleatoria che assume con uguale probabilità tutti i suoi possibili valori”.
- Con questa ipotesi sembrerebbe lecito concludere che l’intruso abbia a disposizione soltanto la forza
-bruta, attacco che abbiamo già visto poter essere fronteggiato attribuendo alle variabili aleatorie un’adeguata
-dimensione. In realtà le cose non stanno proprio cosi. Un intruso che ha a disposizione un numero elevato di testi
-cifrati può condurre attacchi più efficaci mettendo in conto le proprietà statistiche delle variabili aleatorie. 
+Per gli attuali meccanismi crittografici l’impossibilità di deduzione è sempre verificata.
 
+Un accorgimento ha un ruolo fondamentale nell’ottenimento di “robustezza” agli attacchi: “il legame tra il testo in chiaro ed il testo cifrato deve essere così ben nascosto da far apparire quest’ultimo all’intruso come una variabile aleatoria che assume con uguale probabilità tutti i suoi possibili valori”.
+
+Con questa ipotesi sembrerebbe lecito concludere che l’intruso abbia a disposizione soltanto la forza bruta, attacco che abbiamo già visto poter essere fronteggiato attribuendo alle variabili aleatorie un’adeguata dimensione. In realtà le cose non stanno proprio cosi. Un intruso che ha a disposizione un numero elevato di testi cifrati può condurre attacchi più efficaci mettendo in conto le proprietà statistiche delle variabili aleatorie (può più o meno indovinare qualcosa). 
 
 
 

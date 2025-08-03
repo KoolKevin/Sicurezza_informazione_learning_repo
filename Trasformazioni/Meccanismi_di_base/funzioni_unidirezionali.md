@@ -16,7 +16,7 @@ OSS: Non si può escludere a priori che esistano anche alcuni risultati facili d
 
 Due notizie, una cattiva ed una buona.
 - La cattiva è che finora la Teoria della complessità computazionale non è riuscita a dimostrare l’esistenza delle funzioni unidirezionali.
-- La buona. I Crittografi sono riusciti ad individuare funzioni di compressione, di cifratura e di firma calcolabili con algoritmi polinomiali ed hanno altresì verificato che tali funzioni sono invertibili solo con algoritmi o esponenziali, o sub-esponenziali. 
+- La buona. I Crittografi sono riusciti ad individuare funzioni di hashing, di cifratura e di firma calcolabili con algoritmi polinomiali ed hanno altresì verificato che tali funzioni sono invertibili solo con algoritmi o esponenziali, o sub-esponenziali. 
 
 Un’ultima precisazione: nei casi della decifrazione e della firma, l’utente deve poter fare in tempo polinomiale quello che l’intruso non deve invece poter fare. Occorre dunque un ulteriore modello.
 
