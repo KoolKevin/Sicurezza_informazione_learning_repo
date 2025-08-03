@@ -153,6 +153,7 @@ Nel contesto della sicurezza informatica devo considerare anche il caso migliore
 
 
 
+**livello di sicurezza in un cifrario asimmetrico**:
+l’attacco che ha successo in questo caso è quello che, conoscendo la chiave pubblica, **inverta la funzione pub = f(priv)**.
 
-
-
+Basterebbero 128 bit per avere una chiave privata computazionalmente sicura, ma **per una chiave pubblica servono almeno 2000 bit per rendere difficile l’inversione della funzione**. Dunque, **per simmetria**, entrambe le chiavi saranno di almeno 2000 bit. 
