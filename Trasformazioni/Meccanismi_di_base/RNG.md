@@ -70,7 +70,7 @@ I PRNG differiscono dai TRNG per vari aspetti:
         - Un PRNG con seme a 2 bit può produrre al massimo 4 sequenze diverse, perché il numero di semi è solo 4. Quindi non potrà mai generare tutte le 16 combinazioni, nemmeno variando il seme.
     - in pratica: **i PRNG non sono in grado di esplorare tutto lo spazio delle possibili sequenze o sottosequenze, mentre un TRNG può.**
         
-- in assenza di particolari accorgimenti nella costruzione delle funzioni F e/o G, **il valore in uscita è prevedibile** se si conosce un certo numero di valori precedenti (assenza di imprevedibilità). 
+- in assenza di particolari accorgimenti nella costruzione delle funzioni F e/o G (unidirezionalità), **il valore in uscita è prevedibile** se si conosce un certo numero di valori precedenti (assenza di imprevedibilità). 
 
 Problemi:
 - le sequenze di un PRNG sono casuali e riproducibili, ma NON sono imprevedibili
