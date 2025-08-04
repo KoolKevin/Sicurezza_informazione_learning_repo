@@ -10,7 +10,7 @@ Ma...
 ## RNG
 Un RNG (Random Number Generator) è chiamato in causa, in un modo o nell’altro, da tutti i meccanismi ed i servizi per la sicurezza. Ad esempio, gli RNG generano le chiavi segrete.
 
-Alle stringhe di simboli d’uscita del RNG è richiesto il rispetto della proprietà di casualità, ogni valore deve:
+Alle stringhe di simboli d’uscita del RNG è richiesto il rispetto della proprietà di **casualità**. Ovvero, ogni valore deve:
 1. avere la stessa probabilità di verificarsi,
 2. essere statisticamente indipendente da tutti gli altri (la probabilità di una qualsiasi coppia di valori nella stringa deve essere il prodotto delle loro probabilità).
 
@@ -18,8 +18,8 @@ In sostanza i bit che formano la stringa devono essere casuali ed imprevedibili.
 
 **NB**: Per verificare l'effettiva casualità di una sequenza di bit sono stati definiti diversi test statistici. 
 
-Assenza di Casualità: in pratica dopo un po' si ripete.
-Prevedibilità: riesco a capire il prossimo numero casuale
+**Imprevedibilità**: deve essere computazionalmente infattibile predire un valore da quelli che l'hanno preceduto, anche se si conosce perfettamente l'algoritmo o il dispositivo che ha generato la sequenza.
+
 
 ### TRNG
 **Come si ottiene casualità?**
@@ -61,36 +61,3 @@ Un generatore pseudocasuale che ha anche la proprietà di imprevedibilità è de
 ```
 se vuoi sul libro c'è anche qualche esempio di implementazione di PRNG a pagina 19
 ```
-
-
-
-### Funzioni di Hash e algoritmi 
-Una seconda primitiva crittografica è la funzione hash sicura, chiamata in causa in moltissimi meccanismi e servizi. Gli algoritmi che la realizzano devono in generale presentare le seguenti quattro proprietà:
-- **efficienza**: “il calcolo di H(x) è computazionalmente facile per ogni x”.
-    - implementazione con schema di **compressione iterata**
-        - il messaggio viene suddiviso in tanti blocchi di dimensione pari a r bit
-        - vari stadi di compressione in cui una funzione di hash *f* calcola l'hash prendendo gli r bit del blocco e gli *n* bit dell'hash dello stadio precedente
-        - **NB**: m||S funziona; S||m no
-- **robustezza debole alle collisioni**: “per ogni x è infattibile trovare un y ≠ x tale che H(y) = H(x)”.
-    - l'input non lo decide l'attaccante
-- **resistenza forte alle collisioni**: “è infattibile trovare una qualsiasi coppia x, y tale che H(y) = H(x)”.
-    - l'input lo decide l'attaccante
-- **unidirezionalità**: “per ogni h è infattibile trovare un x tale che H(x) = h”.
-    - importante perchè **permette di fare una sorta di cifratura senza chiave**
-
-
-
-
-### Quanti bit deve avere un hash per essere sicuro?
-(i passaggi possono essere saltati)
-
-in questo contesto essere sicuro significa essere resistenti alle collisioni, sia debolmente che fortemente.
-
-- la probabilità di collisione scala con O(2^n) e quindi per garantire la resistenza debole mi bastano 128 bit
-    - bastano anche per la sicurezza forte?
-
-
-paradosso del compleanno (non sto fissando il giorno) <-> resistenza forte (non sto fissando l'hash)
-- è molto più facile attaccare la resistenza forte!
-
-**NB**: per la resistenza forte il numero di tentativi scala come O(2^(n/2)) -> l'impronta deve essere almeno 256 bit 
