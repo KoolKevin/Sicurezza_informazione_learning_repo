@@ -87,10 +87,11 @@ La sicurezza dipende da come è stato scelto il segreto (chiave). Se l’utente,
 
 La prima difesa preventiva è quindi quella di usare dati casuali.
 - R12: ”I bit della stringa che rappresenta un dato segreto devono essere equiprobabili ed indipendenti ”
+- Ciò richiede la disponibilità di un nuovo meccanismo per la sicurezza, il generatore di numeri casuali o RNG (Random Number Generator)
 
-Abbiamo già anche commentato il fatto che la complessità computazione non mette in conto il caso più favorevole per l’intruso; utile è dunque la contemporanea adozione di un secondo provvedimento.
-
+Abbiamo già anche commentato il fatto che la complessità computazione non mette in conto il caso più favorevole per l’intruso; utile è dunque la contemporanea adozione di un secondo provvedimento.
 - R13: ”un dato segreto deve essere frequentemente modificato”. 
+    - In questa maniera non concediamo all’intruso il tempo di svolgere molte prove.
     - per lo stesso motivo, usare tante volte lo stesso segreto per molti messaggi non è raccomandabile
 
 
@@ -128,15 +129,50 @@ Posizione della memoria contenente la chiave cifrata:
 
 
 ### Dedurre
-Per gli attuali meccanismi crittografici l’impossibilità di deduzione è sempre verificata.
+L’impossibilità di deduzione del dato segreto dal risultato della trasformazione in cui è coinvolto (ciphertext), è una proprietà indispensabile di tutti gli algoritmi ed i protocolli crittografici.
 
-Un accorgimento ha un ruolo fondamentale nell’ottenimento di “robustezza” agli attacchi: “il legame tra il testo in chiaro ed il testo cifrato deve essere così ben nascosto da far apparire quest’ultimo all’intruso come una variabile aleatoria che assume con uguale probabilità tutti i suoi possibili valori”.
+Per gli attuali meccanismi crittografici l’impossibilità di deduzione è sempre verificata. Un accorgimento ha un ruolo fondamentale nell’ottenimento di “robustezza” agli attacchi: ```il legame tra il testo in chiaro ed il testo cifrato deve essere così ben nascosto da far apparire quest’ultimo all’intruso come una variabile aleatoria che assume con uguale probabilità tutti i suoi possibili valori.```
+- la proprietà di casualità menzionata in precedenza
 
-Con questa ipotesi sembrerebbe lecito concludere che l’intruso abbia a disposizione soltanto la forza bruta, attacco che abbiamo già visto poter essere fronteggiato attribuendo alle variabili aleatorie un’adeguata dimensione. In realtà le cose non stanno proprio cosi. Un intruso che ha a disposizione un numero elevato di testi cifrati può condurre attacchi più efficaci mettendo in conto le proprietà statistiche delle variabili aleatorie (può più o meno indovinare qualcosa). 
+Per verificare questa proprietà, la Crittanalisi prevede di far riferimento a quattro differenti contesti in cui può trovarsi ad operare chi svolge un attacco:
+
+| **ATTACCO**                    | **CONOSCENZE DELL’INTRUSO**                                                           |
+|--------------------------------|---------------------------------------------------------------------------------------|
+| con solo testo cifrato         | Il linguaggio del testo in chiaro e la probabilità d’occorrenza dei simboli           |
+| con testo in chiaro noto       | Coppie formate da un testo in chiaro e dal testo cifrato corrispondente               |
+| con testo in chiaro scelto     | Testi cifrati corrispondenti a testi in chiaro di sua scelta                          |
+| con testo cifrato scelto       | Testi in chiaro corrispondenti a testi cifrati di sua scelta                          |
+
+Dall’alto verso il basso crescono sia la difficoltà per l’intruso di avere la conoscenza prevista, sia la sua probabilità di successo nei casi in cui la possiede.
+
+Con questa ipotesi sembrerebbe lecito concludere che l’intruso abbia a disposizione soltanto la forza bruta, attacco che abbiamo già visto poter essere fronteggiato attribuendo alle variabili aleatorie un’adeguata dimensione.
+
+### Riassumendo
+L'intruso vuole capire il segreto usato in una qualunque delle trasformazioni per fare danni.
+
+Noi vogliamo che la sua unica possibiltà si fare un attacco di forza bruta che non termina mai. 
+
+L'intrusto può fare 3 cose:
+- provare ad indovinare il segreto e vedere se il risultato della sua trasformazione combacia con una che ha intercettato
+    - contromisure:
+        - i bit della chiave devono essere casuali agli occhi dell'intruso, ovvero equiprobabili ed indipendenti
+            - impossibile ridurre lo spazio di ricerca
+        - cambiare spesso la chiave e/o non usarla in più posti
+            - non concediamo all’intruso il tempo di svolgere molte prove.
+        - la chiave deve essere sufficentemente lunga
+
+- provare ad intercettare il segreto
+    - contromisure:
+        - lo memorizziamo e trasmettiamo cifrato
+        - memorizzare il segreto in una memoria/calcolatore (smart card che cifra) esterno al mio computer
+
+- provare a dedurre il segreto
+    - contromisure:
+        - usare algoritmi appropriati
+        - ridurre al massimo le informazioni che l'attaccante ha in termini di plaintext e/o ciphertext disponibili
 
 
-
-### Complessità computazionale
+## Complessità computazionale
 ...
 
 
