@@ -48,7 +48,9 @@ L’intruso può in questo caso condurre un attacco di length extension:
 - L’impronta H(m’) così ottenuta è **per costruzione uguale a quella di H(s||(m||m’))** e quindi **il messaggio forgiato dall’intruso sarà giudicato dalla destinazione come generato dalla sorgente**.
 
 Lo standard d’inserire la lunghezza del messaggio in coda al messaggio rende questo attacco più difficile, ma **non impossibile** (vedi slide 10 in cui si sfrutta il padding e la lunghezza per modificare il contenuto del messaggio).
-- **NB**: costruire il MAC facendo l'hash di S||m permette l'attacco di estensione del messaggio. Se si usa m||S l'attacco non è possibile. 
+- facendo un doppio hash come in HMAC questa vulnerabilità scompare (da quello che si sà fino ad adesso) 
+
+**NB**: costruire il MAC facendo l'hash di S||m permette l'attacco di estensione del messaggio. Se si usa m||S l'attacco non è possibile. 
 
 
 
