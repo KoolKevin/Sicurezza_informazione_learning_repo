@@ -13,6 +13,8 @@ spazio degli alfabeti cifranti (chiavi) ampio
 
 
 ### Trasposizione
+attribuisce ad ogni simbolo d’ingresso una diversa posizione nella stringa di uscita.
+
 Substitution ciphers **preserve the order of the plaintext symbols but disguise them**.
 
 Transposition ciphers, in contrast, **reorder the letters but do not disguise them**.
@@ -30,9 +32,11 @@ non maschera in alcun modo la ridondanza del testo (caratteristiche statistiche 
 ### Sostituzione polialfabetica
 la chiave definisce tanti alfabeti cifranti
 
-battaglia navale, con la lettera della chiave seleziono la riga; con la lettera del testo in chiaro seleziono la colonna
-- a questo punto una stessa lettera può essere cifrata in vari modi, uno per la lunghezza della chiave
-- questo riduce la ridondanza del testo
+battaglia navale_
+- con la lettera della chiave seleziono la riga
+- con la lettera del testo in chiaro seleziono la colonna
+
+A questo punto una stessa lettera può essere cifrata in vari modi, uno per la lunghezza della chiave. Questo riduce la ridondanza del testo
 
 posso dedurre però la lunghezza della chiave facendo ipotesi su ripetizioni che trovo nel testo cifrato
 - trovata una lunghezza di chiave plausibile posso effettuare un attacco con statistica sui caratteri posti ad una determinata distanza l'uno dall'altro
@@ -43,8 +47,6 @@ Chiave:
 - lunga quanto il testo
 - usata una e una sola volta
 - assolutamente casuale
-
-
 
 - Inviolabile con attacco passivo dato che più ipotesi di decifrazione possono produrre un messaggio sensato 
 - problema: per trasmettere un messaggio riservato su un canale insicuro bisogna concordare una chiave altrettanto lunga su un canale sicuro; tantovale trasmettere direttamente il messaggio sul canale sicuro
