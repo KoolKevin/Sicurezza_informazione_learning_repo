@@ -70,6 +70,8 @@ Un’ultima osservazione sulla debolezza intrinseca dell’identificazione passi
 
 
 
+
+
 ## Identificazione attiva
 La vera contromisura all’attacco con intercettazione e replica è il prevedere che la prova d’identità sia continuamente cambiata
 - posso intercettare la prova, ma il prossimo tentativo ne prevede una diversa e quindi non mi serve a niente
@@ -123,56 +125,106 @@ In questo caso sia A che B hanno il vantaggio di** poter memorizzare solo la PW 
 
 
 
+
 ### sfida/risposta
-...
+Il metodo d’identificazione attiva oggi più usato è il protocollo a sfida e risposta (challenge/ response) per eseguirlo i due corrispondenti possono avvalersi
+- o di funzioni hash sicure,
+- o di un cifrario, simmetrico o asimmetrico,
+- o di uno schema di firma digitale. 
 
 
-se il nonce è prevedibile l'attaccante può sosituirsi a B e farsi mandare H(S || RB'). A questo punto l'intrusore può spacciarsi per A con B nella prossima sessione dato che conosce l'hash che verrebbe usato da A alla sfida con RB'. 
+#### hash
+- A e B scelgono una funzione H sicura e **concordano un segreto s**.
+- Quando A chiede a B di essere identificato inizia l’esecuzione del seguente protocollo a tre passi:
+    1. B: invia ad A un dato di sfida RB che non ha mai impiegato prima (tale numero usato una sola volta è detto **nonce**);
+        - i nonce servono proprio ad evitare gli attacchi di replay rendendo ogni sfida e risposta sempre diversa
+    2. A: calcola c = H(RB || s) e trasmette c come risposta alla sfida;
+    3. B: calcola c’ = H(RB || s) con i dati a sua disposizione ed esamina se c’ = c.
 
+**NB**: cio che identifica è il segreto preconcordato, ma se mandassi l'hash di quello è basta sarei suscettibile ad attacch di replay (diventa identificazione passiva). Per questo si usa anche il NONCE.
 
-### Identificazione mutua
-...
+**NB**: Se il nonce fosse prevedibile l'attaccante potrebbe sosituirsi a B e farsi mandare da A H(S || RB'); con RB' = nonce previsto dall'attaccante che B vero produrrebbe nella prossima sfida. A questo punto l'intrusore può spacciarsi per A con B nella prossima sessione dato che conosce l'hash che verrebbe usato da A alla sfida con RB'. 
 
-esempio non robusto
-- tengo due sessioni attive
+Se si vuole un’identificazione mutua occorrono due dati di sfida (RA, RB). Un idea potrebbe essere:
+0. A vuole identificarsi presso B e identificare B
+1. B→A: RB                          // B sfida A
+2. A→B: c_A = RA || H(RB || s)      // A risponde e sfida a sua volta B
+3. B→A: c_B = H(RA || s)            // B risponde
 
-**attacco di interleaving**
-apro due sessioni contemporanee con due entità diverse
+Protocollo non robusto
+- ho il problema che si possono tenere aperte due sessioni di identificazione
+- **attacco di interleaving**: apro due sessioni contemporanee con due entità diverse
+- **Attacco di reflection**: apro due sessioni contemporanee con la stessa entità
+
+In realtà, per rendere sicura l’identificazione reciproca, occorre usare un protocollo più complesso. Considera il seguente problema:
+
+**Il problema del Gran Maestro di scacchi (attacco di interleaving)**
+Il signor A vuole spacciarsi per un grande esperto di scacchi pur non conoscendo il gioco.
+- A sfida due Gran Maestri B e C, che sistema, senza che se ne accorgano, in due camere contigue: a B assegna i “bianchi”, a C i “neri”.
+- Preso nota della prima mossa di B, A corre nell’altra stanza e la riproduce sulla scacchiera di C.
+- Successivamente prende nota della contromossa di C e corre a riprodurla sulla scacchiera di B.
+- Continuando così ottiene o due patte o un’incredibile vittoria. 
+
+![alt text](img/interleaving_attack.png)
+
+Utilizzando il protocollo ingenuo di sopra abbiamo che:
+- **C tenta di impersonare B**
+- quando A tenta di identificarsi presso B può produrre una sfida a cui A sa rispondere, impersonando A e rigirando la sfida prodotta dal vero B
+- a questo punto A risponde alla sfida e sfida a sua volta l'intruso a dimostrare di essere B
+- similmente a prima, C rigira la sfida al vero B insieme alla risposta di A, **identificandosi come A presso B**
+- B risponde alla sfida rigirata, C riceve una risposta giusta da B a la passa indietro ad A, **identificandosi come B presso A**
 
 
 **Attacco di reflection**
-apro due sessioni contemporanee con la stessa entità
+![alt text](img/reflection_attack.png)
 
+L’attacco richiede di attivare due copie del protocollo contemporaneamente. A inizia il protocollo inviando la sfida RA a C, C avvia un’altra copia del protocollo ma nell’opposta direzione inviando la sfida RA ad A pretendendo di essere B
 
+C apre due sessione di identificazione (una in cui si identifica, e l'altra in cui identifica qualcun'altro):
+- nella prima tenta di identificarsi come A presso B, B dunque lo sfida
+- C non sa rispondere, ma può impersonare A ed aspettare che B tenti di identificarsi presso di lui
+- a questo punto C può mandare come sfida verso B proprio il nonce che B gli aveva mandato come sfida nella prima sessione
+- B, che è ingenuo, risponde; dando a C proprio la risposta che gli serviva alla sfida della prima sessione
+- C a questo punto risponde alla sfida nella prima sessione e si identifica come A presso B
+- per completare il protocollo, C sfida nella prima sessione B ad identificarsi come B 
+- B, che non è un impostore, risponde correttamente, ma nel farlo fornisce la risposta all'ultima sfida che era rimasta aperta nella seconda sessione
+- Concluso l'attacco C si è identificato come A presso B in entrambi i versi
 
-
-
-### qual'è il motivo alla base della non sicurezza del protocollo di identificazione mutua che abbiamo visto
+**qual'è il motivo alla base della non sicurezza del protocollo di identificazione mutua che abbiamo visto**
 1. c'è una forte simmetria tra i messaggi che A e B si mandano a vicenda
 2. l'intrusore può rispondere con un ritardo rispetto a quando gli è stata fatta la sfida (aspetto di recuperare in qualche modo la risposta giusta)
     - non c'è un timestamping che limita la validità temporale dei messaggi
-3. mancano dei legami tra i messaggi che mi consentono di collegare, ad esempio, una risposta ad una sfida
+3. mancano dei legami tra i messaggi che mi consentono di **collegare una risposta ad una sfida**
+
+Il protocollo viene quindi complicato nel seguente modo:
+0. A vuole identificarsi presso B e identificare B
+1. B→A: RB                                          // B sfida A                     
+2. A→B: c_A = RA || H(**RA** || RB || **B** || s)   // A risponde 
+3. B→A: c_B = H(RA || **RB** || **A** || s).        // B risponde
+
+Bisogna dunque impedire all’intruso di intromettersi nel protocollo, spacciandosi per A con B e per B con A: **l’inserzione dell’identificativo del destinatario nelle risposte** è un primo utile accorgimento difensivo.
+- (se uno si spaccia per B, l'identificatore non è quello di B?)
+
+Bisogna anche non concedere all’intruso il tempo per svolgere contemporaneamente due protocolli (reflection): a tal fine al posto, o a fianco, di RA e di RB sono spesso impiegate delle marche temporali (**time-stamp**) per controllare quanto tempo intercorre tra il lancio della sfida e l’arrivo della risposta (faccio andare in timeout le sfide se passa troppo tempo). Utile sia per reflection che per interleaving
+
+Un ulteriore accorgimento è quello di numerare le identificazioni (seq number) tra i due interlocutori (sia per inteleaving che per reflection). 
+
+Come ogni contromisura, timestamp e numeri di sequenza hanno un costo e non sono sempre appropriati:
+- Timestamp
+    - occorre un servizio di timestamp sicuro altrimenti possono essere falsatiì
+    - problemi di sincronizzazione
+- Seq Num
+    - necessità di mantenere dello stato per molto tempo
+
+#### cifrario e firma
+Per lanciare la sfida e controllare poi la risposta, può essere impiegato anche un Cifrario, o uno Schema di firma.
+
+Nel primo caso il verificatore cifra il nonce (con la chiave pubblica del verificando (da autenticare) se si usa cifrario asimmetrico), si mette in attesa della sua decifrazione e confronta infine il risultato con il dato in suo possesso.
+
+Nel secondo caso il verificatore trasmette il nonce in chiaro, si mette in attesa della sua firma e poi la verifica (di nuovo la chiave pubblica deve essere autentica)
 
 
-
-Contromisure qualitative:
-- numeri random sicuri
-- numeri di sequenza per collegare i messaggi
-- timestamping
-
-vengono usate in combinazione per eliminare i svantaggi
-
-
-analogamente ai protocolli di autenticazione in cui si combina
-- quello che sono
-- quello che conosco
-- ...
-
-
-
-
-
-
+### conclusione finale
 protocollo di identificazione = real time
 - per mantenere l'identità dell'entità identificata nel tempo occorre **affiancare ai protocolli di identificazione, dei protocolli di autenticazione**
     - e.g. utilizzare degli HMAC dopo l'identificazione
