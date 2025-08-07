@@ -1,9 +1,16 @@
+![alt text](img/schema_cifraratura_a_blocchi_ECB.png)
 
-## Cifrari a blocco
-cifrano blocchi di dimensione predefinita e non singoli bit alla volta
-- padding di nuovo presente (e sempre presente con anche un intero blocco di padding)
+I cifrari a blocchi cifrano **blocchi di dimensione predefinita** e non singoli bit alla volta.
+- Il testo da cifrare viene suddiviso in blocchi m1, m2, .., mN di lunghezza prefissata L.
+- **Se la lunghezza del testo in chiaro non è un multiplo intero della lunghezza del blocco**, il mittente aggiunge all’ultimo blocco simboli di riempimento privi di significato (**padding**).
+    - In realtà il padding a volte è presente in ogni caso (anche un intero blocco di padding)
+    - Sono in uso diversi standard per consentire alla macchina del destinatario di **eliminare automaticamente i bit di padding** aggiunti dalla macchina del mittente (non ci interessano)
 
-la chiave è la sempre la stessa per ogni blocco
+La regola di trasformazione dei blocchi, fissata dalla chiave k, è una sostituzione monoalfabetica, ma la grossa dimensione dei blocchi la rende immune da un attacco con statistiche (???).
+- questo paragrafo è strano
+- penso stia considerando come simbolo dell'alfabeto un'istanza di un blocco di cui ce ne sono 2^256
+
+La chiave è la sempre la stessa per ogni blocco
 
 
 
@@ -12,14 +19,27 @@ la chiave è la sempre la stessa per ogni blocco
 **rete di Feistel**
 garantisce confusione e diffusione mediante vari round che applicano sostituzione e trasposizione
 
-
-
 A noi interessa lo standard attuale: **AES**
 
 non adotta il modello di Feistel ma adotto anche lui sostituzione e trasposizione
 
 
 skip di roba.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Modalità di cifratura | parte che interessa di più!
