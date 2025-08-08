@@ -203,7 +203,10 @@ Performante in quanto parallelizzabile!
 
 
 
-# Beast attack
+## Beast attack (boh, chiedi quanto è da sapere bene)
+
+
+
 si basa sulla prevedibilità del vettore di inizializzazione... ma non solo! L'attaccante deve poter:
 - intercettare il traffico
 - e iniettare dei pacchetti specifici nel flusso dati di una sessione già attiva
@@ -229,7 +232,13 @@ A livello applicativo è tutto garantito! Ma i progettisti non hanno considerato
 
 
 
-### Paradosso del compleanno e cifrari a blocchi di 64 bit
+### Paradosso del compleanno e cifrari a blocchi di 64 bit (boh, anche questo è una seccatura)
 un cifrario a blocchi è sicuro se e solo se i blocchi hanno dimensione di 128 bit
 
 La probabilità che due blocchi di testo cifrato siano uguali scala con 2^(n/2)
+
+
+
+
+## (domande chiave esame)
+guarda google doc
