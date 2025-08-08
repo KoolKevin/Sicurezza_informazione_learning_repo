@@ -217,6 +217,7 @@ The flaw has to do with the **combination of CBC mode and the fact that TLS (lik
 
 This means that if an attacker can **inject** his own packets into the SSL stream, **he'll know what CBC residue will be used to encrypt the beginning of his message**.
 - basta guardare gli ultimi 8 byte del pacchetto precedente
+- è come avere un IV prevedibile
 
 Mettiamo un chiaro un dubbio che potrebbe venire (che mi è venuto):
 - quello descritto sopra non è il funzionamento normale di CBC?
@@ -225,7 +226,7 @@ Mettiamo un chiaro un dubbio che potrebbe venire (che mi è venuto):
     - in un contesto locale la cifratura inizia, finisce, e poi vengono eventualmente mandati i blocchi cifrati. 
     - In TLS, **la cifratura non ha una fine**. Ho una sessione attiva e posso continuare a mandare messaggi quanto mi pare
     - A questo punto il fatto che il fatto che il CBC residue di ogni blocco sia prevedibile è cio che mi **abilita un chosen-plaintext attack**
-    - Se l'attaccante può iniettare blocchi nella sessione TLS (inviare blocchi che subiranno cifratura come se fosse il mittente lecito), esso può inserire un blocco in chiaro che verrà cifrato esattamente come un blocco precedente rompendo così la riservatezza
+    - Se l'attaccante può iniettare blocchi, o alternativamente convincere/ingannare il mittente legittimo ad inviare il suo messaggio, nella sessione TLS (inviare blocchi che subiranno cifratura come se fosse il mittente lecito), esso può inserire un blocco in chiaro che verrà cifrato esattamente come un blocco precedente rompendo così la riservatezza
 
 Remember that if you XOR the same value twice, the second undoes the effect of the first.
 - m1 = la mia ipotesi sul contenuto di un messaggio = Kimberly
