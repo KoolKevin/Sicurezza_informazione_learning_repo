@@ -248,6 +248,7 @@ Remember that if you XOR the same value twice, the second undoes the effect of t
 
 TLS 1.1 ha implementato il seguente fix:
 - **each packet gets its own IV** and that IV is transmitted (unencrypted) at the beginning of each packet.
+    - il problema era che l'attaccante sapeva a priori quale sarebbe stato l'CBC residue utilizzato per la cifratura del suo blocco
     - non uso più il cifrato del messaggio precedente (che è in chiaro all'attaccante prima della cifratura in cui viene usato)
     - in questo modo l'attaccante non può prevedere quale sarà il CBC residue che dovrà annullare nel suo chosen plaintext
 - The fact that it's transmitted unencrypted is not a security problem — by the time the attacker can see it, it's already been used.
