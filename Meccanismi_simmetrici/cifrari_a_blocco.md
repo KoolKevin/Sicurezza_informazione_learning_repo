@@ -120,12 +120,11 @@ si ha:
 **In CBC l'attacco di malleabilità è infattibile**
 - Si è appena visto che se si prova a sostiture un blocco, la decifratura di tutti i blocchi seguenti viene corrotta
 - Si potrebbe pensare però che l'ultimo blocco sia sostituibile, ma anche questo è impossibile in quanto non verrebbe decifrato correttamente
-    - Per come è fatto CBC, per decifrare correttamente un blocco **ho bisogno del cifrato di tutti i blocchi precedente**
-    - Ma siccome si utilizza un vettore di inizializzazione sempre diverso, anche i blocchi cifrati cambiano sempre, anche se di messaggi uguali   
+    - Per come è fatto CBC, per decifrare correttamente un blocco **ho bisogno del cifrato di tutti i blocchi precedenti**
+    - ma siccome si utilizza un vettore di inizializzazione sempre diverso, i blocchi cifrati cambiano sempre, anche se di messaggi uguali   
         - impossibile intercettare i blocchi cifrati necessari
 - **NB**: se però si trovano due messaggi strutturati molto simili (per esempio uguali fino all'ultimo blocco) in cui IV è stato ripetuto, allora la sostituzione dell'ultimo blocco diventa possibile
     - molto importante non ripetere l'IV
-
 
 **ho bisogno di padding**
 
@@ -205,39 +204,96 @@ Performante in quanto parallelizzabile!
 
 
 
-## Beast attack (boh, chiedi quanto è da sapere bene)
+## Beast attack (non proprio, block injection attack)
+`CBC residue` = roba con cui faccio lo xor prima di cifrare = IV || cifrato del blocco precedente
+
+Atacco a TLS 1.0 (o meglio alla implementazione SSL) che mina la confidenzialità dei messaggi.
+
+
+In TLS 1.0 era possibile fare questo:
+
+The flaw has to do with the **combination of CBC mode and the fact that TLS (like any network communication protocol) splits data into transmittable "chunks"(packets)**. A 1000-byte message may be split into 10 100-byte packets for transmission reasons, each as an individual SSL packet. Logically, they behave as though the were one long message; in particular, **the last eight bytes of packet n-1 is the CBC residue of the first eight bytes of packet n**. 
+- CBC residue visibile
+
+This means that if an attacker can **inject** his own packets into the SSL stream, **he'll know what CBC residue will be used to encrypt the beginning of his message**.
+- basta guardare gli ultimi 8 byte del pacchetto precedente
+
+Mettiamo un chiaro un dubbio che potrebbe venire (che mi è venuto):
+- quello descritto sopra non è il funzionamento normale di CBC?
+- NO!
+- nel contesto di rete di TLS l'attaccante può fare attacchi attivi anche **durante la cifratura** e non solo dopo
+    - in un contesto locale la cifratura inizia, finisce, e poi vengono eventualmente mandati i blocchi cifrati. 
+    - In TLS, **la cifratura non ha una fine**. Ho una sessione attiva e posso continuare a mandare messaggi quanto mi pare
+    - A questo punto il fatto che il fatto che il CBC residue di ogni blocco sia prevedibile è cio che mi **abilita un chosen-plaintext attack**
+    - Se l'attaccante può iniettare blocchi nella sessione TLS (inviare blocchi che subiranno cifratura come se fosse il mittente lecito), esso può inserire un blocco in chiaro che verrà cifrato esattamente come un blocco precedente rompendo così la riservatezza
+
+Remember that if you XOR the same value twice, the second undoes the effect of the first.
+- m1 = la mia ipotesi sul contenuto di un messaggio = Kimberly
+- K = CBC residuo al blocco 1 = cifratura del blocco 1
+- K1 = CBC residuo al blocco 2 = cifratura del blocco 2
+- m1^K = m1^k1^k^k1
+
+**TRUCCO** (guarda le figure sulle slide o qua https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027): 
+- Al blocco 3 non do come input m1 ma: m1 ^ K1 ^ K
+    - **l'attaccante conosce già il CBC residue che verrà utilizzato per cifrare il terzo blocco**, è il secondo blocco cifrato! 
+- così durante la cifratura del blocco 3
+    - **K1 si annulla**
+    - ottengo E(m1^k)! Lo stesso blocco cifrato al passo 2
+        - posso fare la stessa cosa anche in mezzo ad altri passi, se voglio provare ad indovinare il contenuto di un blocco arbitrario
+    - confidenzialità rotta. 
+    - **All Dan had to do was to be able to inject a packet whose CBC residue was known**; this way he could **choose a plaintext that gets encrypted the same way as a previous block**
+- **NB**: CBC vulnerable to **block injection attacks** when the IV of the blocks is predictable 
+
+
+TLS 1.1 ha implementato il seguente fix:
+- **each packet gets its own IV** and that IV is transmitted (unencrypted) at the beginning of each packet.
+    - non uso più il cifrato del messaggio precedente (che è in chiaro all'attaccante prima della cifratura in cui viene usato)
+    - in questo modo l'attaccante non può prevedere quale sarà il CBC residue che dovrà annullare nel suo chosen plaintext
+- The fact that it's transmitted unencrypted is not a security problem — by the time the attacker can see it, it's already been used.
+
+
+**Conclusioni**
+A livello applicativo è tutto garantito!
+- sto cifrando dati con CBC che in teoria è sicuro
+
+Ma i progettisti non hanno considerato la prevedibilità a livello di trasporto...
+- Se CBC usa IV prevedibili (ossia l’intruso puo’ predire quale IV verrà usato per un messaggio successivo), CBC vulnerabile ad attacchi chosen-plaintext.
 
 
 
-si basa sulla prevedibilità del vettore di inizializzazione... ma non solo! L'attaccante deve poter:
-- intercettare il traffico
-- e iniettare dei pacchetti specifici nel flusso dati di una sessione già attiva
-- o, equivalentemente, induce la sorgente a cifrare una cosa che vuole lui (non facile)
-
-la vulnerabilità dipende da:
-- chiave formata da parte fissa e da parte variabile (vettore di inizializzazione pseudo-casuale)
-- ogni messaggio applicativo prevede un chiave diversa
-- ma nella frammentazione dei protocolli di trasporto, il singolo pacchetto viene cifrato in sequenza con gli altri utilizzando gli ultimi (8)byte del pacchetto precedente come vettore di inizializzazione per la cifratura del pacchetto corrente
-- **il vettore di inizializzazione non è più imprevedibile! Lo vedo...** 
-
-...
-
-il cifrato rimane uguale
-
-proprità dell'xor mi permettono di costruire un messaggio in chiaro opportuno che mi permette di risalire al passo 3 l'output del passso 2
-- se i due cifrati coincidono, la mia ipotesi di attaccante è corretta!
-
-
-
-A livello applicativo è tutto garantito! Ma i progettisti non hanno considerato la prevedibilità a livello di trasporto...
 
 
 
 
-### Paradosso del compleanno e cifrari a blocchi di 64 bit (boh, anche questo è una seccatura)
-un cifrario a blocchi è sicuro se e solo se i blocchi hanno dimensione di 128 bit
 
-La probabilità che due blocchi di testo cifrato siano uguali scala con 2^(n/2)
+
+
+### Paradosso del compleanno e cifrari a blocchi
+Abbiamo affermato più volte che la dimensione della chiave è importante (sufficientemente grande per evitare brute force). Nei cifrari a blocco, anche **la dimensione del blocco deve essere sufficientemente grande!**
+- essa **definisce quanti blocchi possono essere cifrati con la stessa chiave**
+
+Si ha che molte modalità di cifratura diventano insicure dopo 2^n/2 cifrature ((paradosso del compleanno)) a causa dell’aumento di probabilità di **collisioni tra due blocchi di cifrato** (blocchi di plaintext diversi che producono lo stesso blocco cifrato).
+
+Similmente a 2-time key, La collisione tra due blocchi permette di rivelare l’X-OR tra i testi in chiaro dei corrispondenti blocchi.
+- Questo è già pessimo, ma se l’attaccante riesce a fare ipotesi su un testo in chiaro puo’ recuperare l’altro testo in chiaro violando ancora di più la riservatezza
+
+**Esempio con CBC**:
+L'idea chiave è che se troviamo due ciphertext block uguali Ci ​= Cj, allora possiamo dedurre una relazione tra i plaintext corrispondenti.
+
+- Supponiamo di trovare:
+    - `Ci ​= Cj ​  ⇒   E_k(Pi ​⊕ Ci−1) = E_k(Pj ⊕ Cj−1​)`
+
+- Una collisione su due cifrati uguali CBC significa avere due input identici (E_k è deterministica):
+    - `Pi ⊕ Ci−1 ​= Pj ​⊕ Cj−1`
+
+- Basta riordinare i termini ed otteniamo che **lo xor dei cifrati precedenti è uguale allo xor dei plaintext correnti**
+    - `Pi ​⊕ Pj ​= Ci−1 ​⊕ Cj−1`
+​
+**cosa concludiamo**
+- La probabilità che un attaccante trovi due blocchi di testo cifrato uguali scala con 2^(n/2) e non con 2^n
+- dopo 2^(n/2) cifratura continuare a cifrare con la stessa chiave non è più consigliato
+- un cifrario a blocchi è sicuro **se e solo se i blocchi hanno dimensione >= 128 bit**
+
 
 
 
