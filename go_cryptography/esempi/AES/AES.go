@@ -26,11 +26,10 @@ func main() {
 		panic(fmt.Errorf("impossibile generare chiave: %w\n", err))
 	}
 	// block mi permette già di cifrare/decifrare ma mancano le operazioni
-	// fornite dalle modalità di cifratura (padding, divisione in blocchi
-	// del plaintext, randomizzaizione (non si chiama così ma non mi ricordo il nome))
+	// fornite dalle modalità di cifratura
 	block, err := aes.NewCipher(newKey)
 	fmt.Println(block.BlockSize())
-	// dato l'algoritmo specificato nel blocco posso ora decidere quale modalità di
+	// dato l'algoritmo specificato nel block posso ora decidere quale modalità di
 	// cifratura utilizzare
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
@@ -42,6 +41,7 @@ func main() {
 		panic(err.Error())
 	}
 
+	// encrypt
 	ciphertext := aesgcm.Seal(nil, nonce, plaintext, nil)
 	fmt.Printf("ciphertext: %x\n", ciphertext)
 

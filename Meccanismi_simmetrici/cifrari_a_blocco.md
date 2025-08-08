@@ -104,6 +104,8 @@ si ha:
 - Sorgente (cifratura):             c0 = IV, ci = Ek(ci-1 ⊕ mi)
 - Destinazione (decifratura):       IV = c0, mi = Dk(ci) ⊕ ci-1 = ci-1 ⊕ mi ⊕ ci-1 
 
+![alt text](img/CBC_decryption.png)
+
 **Ottengo diffusione**: ogni blocco cifrato dipende anche dai blocchi cifrati precedenti (e quindi dal plaintext precedente)
 
 - efficienza
