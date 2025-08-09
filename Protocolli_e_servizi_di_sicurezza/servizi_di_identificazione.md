@@ -134,7 +134,7 @@ Il metodo d’identificazione attiva oggi più usato è il protocollo a sfida e 
 
 
 #### hash
-- A e B scelgono una funzione H sicura e **concordano un segreto s**.
+- A e B scelgono una funzione H sicura e **concordano un segreto s (che può essere anche una pwd (vedi modem))**.
 - Quando A chiede a B di essere identificato inizia l’esecuzione del seguente protocollo a tre passi:
     1. B: invia ad A un dato di sfida RB che non ha mai impiegato prima (tale numero usato una sola volta è detto **nonce**);
         - i nonce servono proprio ad evitare gli attacchi di replay rendendo ogni sfida e risposta sempre diversa
