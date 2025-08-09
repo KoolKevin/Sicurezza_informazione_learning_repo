@@ -203,8 +203,13 @@ Performante in quanto parallelizzabile!
 
 
 
+## Beast attack (non proprio, forse è meglio chiamarlo block injection attack)
+**Ipotesi**
+l'attaccante può:
+- intercettare i messaggi cifrati
+- iniettare messaggi nel canale che verranno a loro volta cifrati
+    - o, equivalentemente, convincere/ingannare il mittente legittimo a mandare messaggi il cui contenuto è deciso dall'attaccante 
 
-## Beast attack (non proprio, block injection attack)
 `CBC residue` = roba con cui faccio lo xor prima di cifrare = IV || cifrato del blocco precedente
 
 Atacco a TLS 1.0 (o meglio alla implementazione SSL) che mina la confidenzialità dei messaggi.
@@ -241,9 +246,10 @@ Remember that if you XOR the same value twice, the second undoes the effect of t
     - **K1 si annulla**
     - ottengo E(m1^k)! Lo stesso blocco cifrato al passo 2
         - posso fare la stessa cosa anche in mezzo ad altri passi, se voglio provare ad indovinare il contenuto di un blocco arbitrario
-    - confidenzialità rotta. 
+    - **Confidenzialità rotta senza mai compromettere la chiave!** 
     - **All Dan had to do was to be able to inject a packet whose CBC residue was known**; this way he could **choose a plaintext that gets encrypted the same way as a previous block**
-- **NB**: CBC vulnerable to **block injection attacks** when the IV of the blocks is predictable 
+
+- **NB**: CBC vulnerable to **block injection attacks** when the IV of the blocks is **predictable** 
 
 
 TLS 1.1 ha implementato il seguente fix:
