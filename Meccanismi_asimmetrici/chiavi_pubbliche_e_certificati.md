@@ -144,10 +144,6 @@ slide 8: quello che c'è da capire è che il fatto di verificare un messaggio (i
 - anche i certificati restituiti dalla CA sono firmati e resi integri, per cui anche i CA distribuiscono una chiave pubblica
 
 
-
-
-
-
 Occorre anche decidere chi può ricoprire il ruolo di T; due sono i modelli in uso.
 1. T è un Ente ufficialmente riconosciuto come fidato ed istituzionalmente incaricato di emettere certificati.
 2. T è un qualsiasi utente che dichiara spontaneamente di conoscerne bene un altro; chi si fida di lui, si fida anche della sua dichiarazione.
