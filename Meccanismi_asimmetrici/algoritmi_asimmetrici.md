@@ -5,7 +5,7 @@ nota: di fatto DH è un cifrario asimmetrico
 
 **OSS IMPORTANTE**: una cifratura asimmetrica è molto meno efficiente di una cifratura simmetrica?
 - perchè? dobbiamo fare delle esponenziazioni modulari!
-- nel caso simmetrico devo fare solo trasposizioni e sostituzioni
+- nel caso simmetrico devo fare solo trasposizioni e sostituzioni (con xor)
 
 
 ### Come facciamo ad ottimizzare l'esponenziazione modulare?
