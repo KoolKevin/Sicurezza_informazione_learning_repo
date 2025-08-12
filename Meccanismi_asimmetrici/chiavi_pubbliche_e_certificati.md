@@ -138,7 +138,7 @@ Chi riceve un certificato emesso da T
 - e solo in caso di verifica positiva **trasferisce su PX la “fiducia” che ha su PT**. 
 
 
-slide 8: quello che c'è da capire è che il fatto di verificare un messaggio (integro) allegedly proveniente da X, firmato con una chiave privata (allegedly di X), mi da solo la certezza che il mittente di quel messaggio abbia la chiave privata e non che sia effettivamente X. 
+slide 8: quello che c'è da capire è che il fatto di verificare la firma di un messaggio (integro) allegedly proveniente da X, firmato con una chiave privata (allegedly di X), mi da solo la certezza che il mittente di quel messaggio abbia la chiave privata e non che sia effettivamente X. 
 - **senza certificato manca l'identificazione del mittente, ho solo la prova di possesso**
 - quando **l'ente fidato verifica sia prova di possesso, che identificazione**, allora rilascia il certificato (che ha la forma mostrata nella slide)
 - anche i certificati restituiti dalla CA sono firmati e resi integri, per cui anche i CA distribuiscono una chiave pubblica

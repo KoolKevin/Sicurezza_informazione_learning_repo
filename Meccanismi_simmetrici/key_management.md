@@ -192,7 +192,7 @@ Diffie ed Hellman hanno suggerito di usare **l’esponenziazione modulare** per 
 - e g < p un numero il cui elevamento a potenza (mod p) per x=1,2,..,p-1 fornisce una permutazione di Z*p (numeri interi modulo p)
     - g generatore mod p
 
-I dati **p e g, non segreti, devono essere noti ad entrambi**. 
+I dati **p e g, non segreti**, devono essere **noti ed uguali per entrambi**. 
 - Ad esempio chi inizia il protocollo può deciderli e comunicarli al corrispondente insieme al suo dato Y
 
 **NB**: C'è una somiglianza (non casuale) tra i dati X e Y, e i concetti di chiave privata e pubblica 
