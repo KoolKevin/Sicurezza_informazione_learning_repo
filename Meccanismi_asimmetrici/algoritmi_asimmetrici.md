@@ -120,13 +120,15 @@ Un intruso che ha intercettato un cifrato c di cui vuole scoprire il plaintext m
 - ottenere dal proprietario la decifrazione m1 di c1 
     - **m1 = m * r**
 - e moltiplicare infine m1 e m2
-    - m * r * r^-1 = m
+    - m1 * m2 = m * r * r^-1 = m
 
 **Pur non avendo inviato c, l’intruso ha così ottenuto la decifrazione che gli interessa!** 
 - questo perchè il destinatario ha decifrato per lui il prodotto dei due plaintext
+
+Contromisure:
 - difficile però che l'intrusore riesca a convincere il proprietario a decifrare qualsiasi messaggio di sua scelta
     - sopratutto se si ha identificazione
-
+- (se si usa padding (OAEP) la proprietà moltiplicativa non penso valga più)
 
 
 
@@ -191,3 +193,8 @@ A sua volta, U
 3. calcola Dk(Ek(m)) = m con CS. 
 
 **NB**: Si noti la **similitudine tra questo schema e quello della master key**. In entrambi i casi esiste una chiave che cifra chiavi. C’è però una **grossa differenza**: in questo caso la chiave che cifra chiavi (PU) è unica per tutti i corrispondenti di U e può essere loro comunicata senza alcuna forma di riservatezza.  
+
+Esiste però una vulnerabilità dei Cifrari asimmetrici, se li si per **cifrare messaggi molto più corti del modulo _n_**: i crittogrammi generati ricadrebbero sempre, infatti, in uno spazio più piccolo di quello a disposizione e ciò renderebbe più agevole il lavoro di crittanalisi (?).
+- attacco di forza bruta facilitato
+
+**Prima di cifrare la chiave di sessione, occorre dunque affiancarle un padding casuale** che porti la lunghezza complessiva a ⎣log2 n⎦ (un bit in meno di n). Se si usa RSA, lo standard **OAEP** di PKCS#1v2 (v. pag. 103) è idoneo allo scopo.
