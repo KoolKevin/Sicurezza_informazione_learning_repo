@@ -67,7 +67,7 @@ func getN(p, q *big.Int) *big.Int {
 	return n
 }
 
-// phi = (p-1)*(q-1)
+// tot/phi = (p-1)*(q-1)
 func getPhi(p, q *big.Int) *big.Int {
 	bigone := big.NewInt(1)
 
@@ -84,7 +84,7 @@ func getPhi(p, q *big.Int) *big.Int {
 	return tot
 }
 
-// e is greater than 1 and less than tot - [2, tot)
+// e is greater than 1 and less than tot -> e appartiene a [2, tot)
 // e and tot have a greatest common divisor of 1 (coprimi)
 func getE(tot *big.Int) *big.Int {
 	bigone := big.NewInt(1)
@@ -111,6 +111,7 @@ func getE(tot *big.Int) *big.Int {
 
 // d = inverso moltiplicativo modulare di e
 // (d*e) % phi = 1
+// d = e^-1 mod phi
 func getD(e, phi *big.Int) *big.Int {
 	d := new(big.Int)
 	d.ModInverse(e, phi)
@@ -132,7 +133,8 @@ func decrypt(c, d, n *big.Int) *big.Int {
 }
 
 func main() {
-	msgBytes := []byte(`questo è il mio bel messaggio! Non può essere più lungo della chiave :(`)
+	msgBytes := []byte(`questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+						Se lo voglio più lungo della chiave, devo dividere in blocchi!`)
 	plainBigInt := new(big.Int)
 	plainBigInt.SetBytes(msgBytes)
 

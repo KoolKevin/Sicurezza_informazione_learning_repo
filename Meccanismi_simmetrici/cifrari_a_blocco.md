@@ -44,7 +44,10 @@ La cifratura di un solo blocco di bit alla volta, evidenziata sopra, è detta mo
 Questa proprietà risulta evidente quando si cifrano immagini: ![ECB](img/penguin_ecb.png)
 - **le regolarità del plaintext rimangono presenti nel ciphertext**
 
-ECB risulta di conseguenza **malleabile** (modifiche al testo cifrato possono produrre effetti prevedibili al testo in chiaro)
+Questo permette attacchi del tipo **chosen-plaintext**
+- se i messaggi cifrati sono prevedibili (vedi voto elettronico si/no), un attaccante può vedere come viene cifrata la sua risposta e confrontarla con altri cifrati che ha intercettato, **rompendo così la riservatezza**
+
+ECB risulta anche **malleabile** (modifiche al testo cifrato possono produrre effetti prevedibili al testo in chiaro)
 - in particolare è facile fare un attacco di **sostituzione di blocchi**
 
 #### esempio malleabilità ECB
@@ -60,7 +63,9 @@ Pro:
 - Alto parallelismo: i blocchi sono tra loro indipendenti e quindi possono venire cifrati in parallelo 
 - Non propagazione degli errori.
 Contro:
-- Preserva le regolarità (malleabile): a blocchi identici di testo in chiaro corrispondono blocchi identici di testo cifrato.
+- a blocchi identici di testo in chiaro corrispondono blocchi identici di testo cifrato.
+- suscettibile ad attacchi di chosen plaintext (malleabilità)
+- che di chosen ciphertext (controllo due cifrati e vedo se combaciano)
 
 **ECB lo possiamo usare (in quanto efficente)**
 - per cifrare un testo che risiede interamente in un solo blocco 
