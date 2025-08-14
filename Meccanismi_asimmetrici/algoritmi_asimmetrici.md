@@ -153,10 +153,26 @@ Nel caso di RSA, il tempo di esponenziazione modulare scala con il cubo della di
 ### Come facciamo a generare dei numeri primi molto grandi?
 Non è facile generare dei numeri primi 
 
-algoritmi deterministici -> esponenziali
-algoritmi probabilistici -> polimoniali ma vanno ripetuti
+**Ricerca di un numero primo**
+1. x dispari, generato a caso nel desiderato intervallo
+2. If (x primo?) = false    // test di primalità
+        then x = x + 2 and repeat 2.
+3. Return x
 
-L'ottimizzazione della generazione dei numeri primi è comunque meno interessante rispetto all'ottimizzazione dell'esponenziazione modulare in quanto la generazione delle chiavi si fa una volta ogni tanto. La cifratura/decifratura si fa spesso
+**Test di primalità**
+1. Test deterministici:
+    - se n non lo supera è composto,
+    - se lo supera è primo
+2. Test probabilistici:
+    - se n fallisce il test è composto;
+    - se lo supera è probabilmente primo
+
+I test deterministici sono computazionalmente più onerosi dei test probabilistici.
+
+I test probabilistici (Miller Rabin) sono polinomiali, ma devono essere poi ripetuti più e più volte per far tendere a 1 la probabilità di avere realmente individuato un primo.
+- tempo comunque polinomiale
+
+Si preferiscono i test probabilistici ripetuti rispetto a quelli deterministici. L'ottimizzazione della generazione dei numeri primi è comunque meno interessante rispetto all'ottimizzazione dell'esponenziazione modulare in quanto la generazione delle chiavi si fa una volta ogni tanto. La cifratura/decifratura si fa spesso!
 
 **conclusione**: insomma, la crittografia asimmetrica è sicuramente meno efficiente computazionalmente rispetto a quella simmetrica (devo generare i numeri primi, esponenziazioni modulari, ecc...)
 

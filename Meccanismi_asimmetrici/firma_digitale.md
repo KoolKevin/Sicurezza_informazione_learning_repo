@@ -199,8 +199,9 @@ Se la stessa chiave è usata sia:
 l’attaccante può costruire uno dei due pezzi con una firma cieca e l’altro con una firma normale, bypassando qualsiasi controllo di “messaggi proibiti”. Di conseguenza: `la chiave usata per apporre firme ad occhi chiusi non deve essere impiegata in alcun altro contesto`.
 
 **attacco alla riservatezza facendo firmare un cifrato**
-Il precedente attacco può essere utilizzata anche da un intruso che ha intercettato un testo cifrato con RSA e destinato ad un utente X.
-- L’intruso oscura c, se lo fa firmare da X (il che corrisponde alla decifrazione con la chiave privata), elimina il numero a caso ed ottiene il testo in chiaro che non doveva poter conoscere.
+Il precedente attacco può essere utilizzato anche per rompere la riservatezza di un testo cifrato con RSA intercettato da un intruso e destinato ad un utente X.
+
+L’intruso oscura c, se lo fa firmare da X (il che corrisponde alla decifrazione con la chiave privata), elimina il numero a caso ed ottiene il testo in chiaro che non doveva poter conoscere.
 
 Vale dunque la seguente regola: `chi impiega RSA per decifrare e per firmare deve utilizzare due differenti coppie di chiavi`
 - in questa maniera, firmare un cifrato non lo decifra dato che le coppie di chiavi sono diverse
