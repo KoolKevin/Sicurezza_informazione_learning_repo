@@ -119,18 +119,29 @@ func getD(e, phi *big.Int) *big.Int {
 }
 
 // ciphertext = m^e (mod n)
-func encrypt(m, e, n *big.Int) *big.Int {
+func encrypt_block(m, e, n *big.Int) *big.Int {
 	c := new(big.Int)
 	c.Exp(m, e, n)
 	return c
 }
 
 // plaintext = c^d (mod n)
-func decrypt(c, d, n *big.Int) *big.Int {
+func decrypt_block(c, d, n *big.Int) *big.Int {
 	p := new(big.Int)
 	p.Exp(c, d, n)
 	return p
 }
+
+// TODO: fai anche questi
+// func encrypt_msg(msg []byte, e, n *big.Int) *big.Int {
+
+// }
+
+// func decrypt_msg(c []*big.Int, d, n *big.Int) *big.Int {
+
+// }
+
+const KEY_SIZE = 2048
 
 func main() {
 	msgBytes := []byte(`questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
@@ -138,17 +149,17 @@ func main() {
 	plainBigInt := new(big.Int)
 	plainBigInt.SetBytes(msgBytes)
 
-	p, q := generatePrivateNums(2048)
+	p, q := generatePrivateNums(KEY_SIZE)
 	n := getN(p, q)
 	phi := getPhi(p, q)
 	e := getE(phi)
 	d := getD(e, phi)
 
-	cipherBigInt := encrypt(plainBigInt, e, n)
+	cipherBigInt := encrypt_block(plainBigInt, e, n)
 	fmt.Println("encrypted message:")
-	fmt.Println(cipherBigInt.Text(16))
+	fmt.Println(cipherBigInt.Text(16)) // trasformo bigInt in stringa esadecimale
 
-	plainBigIntDecrypted := decrypt(cipherBigInt, d, n)
+	plainBigIntDecrypted := decrypt_block(cipherBigInt, d, n)
 
 	if plainBigInt.Cmp(plainBigIntDecrypted) == 0 {
 		fmt.Println("messaggio cifrato e decifrato con successo")

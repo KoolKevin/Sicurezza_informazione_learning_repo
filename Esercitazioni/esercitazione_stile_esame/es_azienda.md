@@ -35,3 +35,8 @@ Abbiamo **identificazione unilaterale!**
 - l'identification server potrebbe essere malevolo
 - **tom non ha nessuna garanzia che l'IS che lo sfida sia quello della propria azienda**
 
+
+
+
+
+Negli appunti sul drive, a pagina 110 hai altra roba
