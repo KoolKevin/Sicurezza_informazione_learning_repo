@@ -1,22 +1,3 @@
-TimeStampingServer
-
-Kerberos, TSS e PGP sono servizi di livello applicativo e quindi non sono trasparenti all'utente (sono programmi da scaricare esplicitamente)
-
-
-Firma digitale è un termine overloaded
-- firma come servizio (con le sue proprietà: deve essere associata ad un solo documento, deve poter essere verificata da tutti, ...)
-- firma come algoritmo implementato con cifrario (ad esempio con RSA)
-
-La firma dipende da una marca temporale
-- per validità
-- o quantaltro (pensa a momenti di invio di un messaggio per una graduatoria)
-
-
-Come al solito non dobbiamo studiare per filo e per segno i protocolli, ma dobbiamo capirne la logica e generalizzare le tecniche usate al suo interno per i nostri scopi e capire a cosa servono quest'ultime
-
-### che proprietà deve avere un servizio di marcatura temporale? (questa è la parte utile che possiamo generalizzare)
-
-
 
 
 
