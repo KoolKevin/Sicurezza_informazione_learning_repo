@@ -80,6 +80,7 @@ Un servizio sicuro di marcatura temporale deve avere diverse proprietà:
 4. Deve essere possibile far marcare temporalmente anche dati riservati
     - impiego di hash
 5. Chiunque deve potere far marcare suoi documenti e verificare la marca apposta su documenti degli altri
+    - servizio pubblico
     - impiego di crittografia asimmetrica
 
 ![alt text](img/TSS.png)
@@ -101,4 +102,6 @@ La soluzione usuale è prevedere che **TSS sia un Ente fidato** (ci fidiamo che 
 
 
 Problemi:
+- fiducia
 - non molto scalabile in quanto servizio centralizzato molto richiesto
+    - vita della chiave del TSS deve essere breve in quanto impiegata un sacco
