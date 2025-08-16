@@ -11,8 +11,9 @@ Il servizio di autenticazione si **ispira al modello del KDC**
 
 #### ragionamento iniziale | dove posiziono il servizio di autenticazione?**
 sulle workstation?
-- ogni workstation dovrebbe tenere traccia delle prova di identità di tutti gli utenti
+- **ogni workstation dovrebbe tenere traccia delle prova di identità di tutti gli utenti**
 - ci dovrebbe essere una relazione di fiducia tra le workstation e i server 
+    - scala con n^2
     - e devono essere aggiunte/tolte se vengono aggiunte/tolte delle workstation/server
 - **non scalabile**
     - ci può stare se ci sono poche macchine e quindi l'aggravio ammistrativo del sistema è basso
@@ -21,12 +22,15 @@ sui server?
 - uhm, stessi problemi in realtà
 
 **Idea**: non ha senso distribuire su tutte le macchine le funzionalità di autenticare gli utenti, utilizziamo un **unico server di autenticazione centralizzato**.
-- relazione di fiducia tra i server ed il server di autenticazione.
+- relazione di fiducia tra i server ed il server di autenticazione (**singola**).
     - I server accettano tutti i messaggi autenticati dal server di autenticazione
 - permette Single Sign On
     - le informazioni di autenticazione sono mantenuta da questo server centralizzato e non distribuite in giro
     - non ci sono problemi di sincronizzazione
 - permette di autenticare gli utenti ai server e i server agli utenti.
+
+
+
 
 ### Architettura generale Kerberos 
 Ogni utente del servizio ha un suo **identificativo ID** ed un’unica **password P**, che gli consente di accedere a tutti i servizi. Il sistema che controlla gli accessi memorizza **un’impronta H(P)** di 64 bit come termine di paragone.
@@ -232,7 +236,7 @@ Se durante la sessione l’utente ha bisogno di accedere anche ad un altro serve
 - C è già stato identificato da AS
 - bisogna rigenerare un autenticatore (T3 fresh) e chiedere un ticket per il nuovo V
 
-
+![alt text](img/kerberos_protocol.png)
 
 
 ### Conclusioni
@@ -254,18 +258,34 @@ non da sapere a memoria, ma bisogna saperci ragionare sopra
     - permettono ad un utente di **non doversi riautenticare un sacco di volte**
         - basta ripresentare un ticket (se ancora valido) per poter riusufuire dei servizi
 
+- **Cos’è un authentication server?**
+    - È un server che verifica l’identità di un utente (lo identifica) o di un servizio (OAuth) quando tenta di accedere a una risorsa come:
+        - rete aziendale
+        - applicazione web
+        - database
+        - VPN
+        - servizio cloud
+    - In pratica, il client dice: “Sono Alice” e il server risponde: “Dimostralo”.
+    - fondamentalmente il “buttafuori digitale” di un sistema informatico:
+        - controlla chi può entrare e che permessi ha una volta dentro.
+    - A cosa serve?
+        - **Centralizzazione** 
+            - un unico punto per gestire credenziali e permessi.
+            - non devo replicare per ogni servizio in cui mi autentico
+        - **Single Sign-On (SSO)**
+            - un login per più servizi, riducendo password multiple e login multipli.
+        - Tracciamento
+            - registrare chi si è autenticato, quando e da dove
+    - Come funziona (flusso generico; non specifico di kerberos)
+        - Richiesta di accesso – il client chiede di accedere a una risorsa.
+        - Sfida (challenge) – il server chiede credenziali (password, token, certificato, biometria…).
+        - Verifica – il server confronta le credenziali con un archivio (database locale, LDAP, Active Directory, ecc.).
+        - Risposta:
+            - Se OK → rilascia un token che prova l’avvenuta autenticazione.
+            - Se KO → nega l’accesso e può loggare il tentativo.
+        - Accesso alle risorse – il client usa il token per accedere ai servizi autorizzati.
 
 L'autenticazione di Kerbers è fortemente centralizzata; in futuro vedremo anche autenticazione federata
-
-
-
-
-
-
-
-
-
-
 
 
 
