@@ -1,20 +1,3 @@
-Kerberos, TSS e PGP sono servizi di livello applicativo e quindi non sono trasparenti all'utente (sono programmi da scaricare esplicitamente)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## TSS (Time Stamping Service)
 Diversi sono i programmi che durante la loro esecuzione chiamano in causa l’orologio interno del calcolatore al fine di associare una marca temporale (anno, mese, giorno, ora, ecc.) ai dati che devono gestire. 
 - **Diversa è anche l’accuratezza richiesta alle marche temporali: tutto dipende dall’uso che ne viene fatto**.
