@@ -89,6 +89,9 @@ I primi due metodi sono i più usati, realizzando un buon compromesso tra sicure
 
 
 
+
+
+
 ### one-time pwd
 Il metodo della password impiegata una sola volta può basarsi sull’uso o di una **funzione unidirezionale** (o di un cifrario con chiave di sessione).
 
@@ -126,12 +129,15 @@ In questo caso sia A che B hanno il vantaggio di** poter memorizzare solo la PW 
 
 
 
+
+
 ### sfida/risposta
 Il metodo d’identificazione attiva oggi più usato è il protocollo a sfida e risposta (challenge/ response) per eseguirlo i due corrispondenti possono avvalersi
 - o di funzioni hash sicure,
 - o di un cifrario, simmetrico o asimmetrico,
 - o di uno schema di firma digitale. 
 
+![alt text](img/sfida_risposta.png)
 
 #### hash
 - A e B scelgono una funzione H sicura e **concordano un segreto s (che può essere anche una pwd (vedi modem))**.
@@ -223,6 +229,7 @@ Nel primo caso il verificatore cifra il nonce (con la chiave pubblica del verifi
 
 Nel secondo caso il verificatore trasmette il nonce in chiaro, si mette in attesa della sua firma e poi la verifica (di nuovo la chiave pubblica deve essere autentica)
 
+**NMB**: in questo caso l'identificazine mutua non è vulneraibile agli attacchi esposti sopra in quanto **non c'è un segreto condiviso** (se si usa un meccanismo asimmetrico). **L'identificazione mutua è molto semplificata** in quanto analoga al caso unilaterla (basta che l'identificando faccia una **POP** della chiave privata; vedi certificati X.509)
 
 ### conclusione finale
 protocollo di identificazione = real time

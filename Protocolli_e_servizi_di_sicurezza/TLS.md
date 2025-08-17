@@ -1,1 +1,0 @@
-TLS is, in essence, a specification for the secure exchange of encryptions keys over a public channel. Once the keys are exchanged, symmetric (e.g. "classic") cryptography takes over and is responsible for securing the transmitted data. Protection against would-be eavesdroppers, then, is entirely in the hands of the encryption algorithm applied.
