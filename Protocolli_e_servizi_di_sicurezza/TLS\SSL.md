@@ -97,7 +97,7 @@ Terminato il protocollo Handshake inizia il protocollo di Record.
 2. Fase 2 | autenticazione del server e invio di chiavi (meglio dire parametri per lo scambio di chiavi) 
     - Il server fornisce le informazioni di supporto alla sua autenticazione 
         - il suo certificato (o meglio, la sua catena di certificati)
-        - firma per la POP
+        - firma per la POP (che lo **identifica**)
     - invia parametri per lo scambio delle chiavi (vedi Y e X in DH) se necessario (magari si usa cifrario ibrido con RSA)
     - Può richiedere l’autenticazione del client in questa fase se vuole.
 
@@ -148,7 +148,7 @@ come al solito non bisogna studiare a memoria il protocollo, piuttosto bisogna c
         - se il server non è chi dice di essere **la fase 4 non si chiude** (per questo è importante questa conferma finale)
 
 
-#### Attacco di redirizione
+#### Attacco di redirezione
 Se uso solo il protocollo di handshake sono vulnerabile a redirezioni (di cui non mi accorgo)
 - il certificato che ricevo potrebbe essere valido e il mittente potrebbe avere anche la prova di possesso che lo identifica
 - tuttavia, nel protocollo di negoziazione non c'è nessuna operazione che verifica che **il certificato che è stato inviato ha come soggetto proprio al server con cui voglio comunicare** 
@@ -164,7 +164,6 @@ Usa i meccanismi che abbiamo sappiamo già
 - prima si autentica con HMAC e poi si cifra con un cifrario simmetrico
     - notare che SSL non supporta il non ripudio dato che usa segreti condivisi
     - si usa HMAC perchè più efficiente rispetto a firma digitale
-- (da confrontare con ipsec)
 
 Trasmissione
 - Il messaggio è frammentato ed eventualmente compresso.
@@ -179,5 +178,6 @@ Ricezione
 Nota: Avendo cifrato il tutto, in ricezione, il server deve prima decifrare e poi verificare l'autenticità questo ordine è più oneroso rispetto al contrario 
 - se infatti il messaggio non è integro lo dovrei scartare subito senza decifrarlo
 - SSL risulta quindi sotto questo aspetto poco efficiente.
+- confronta con ipsec
 
 ![alt text](img/record.png)
