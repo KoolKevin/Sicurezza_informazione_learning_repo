@@ -56,9 +56,12 @@ L’intruso ha inoltre due altre vulnerabilità da sfruttare, **la memoria dell�
 - con identificazione passiva le password vanno memorizzate da qualche parte (file, db). Se l'attaccante ottiene accesso al db delle pw, può impersonarsi come qualsiasi utente leggendo qualche entry, oppure può aggiungere una entry con le sue credenziali
     - una contromisura è memorizzare nel db l'hash (funzione non invertibilie) delle pw.
     - l'attaccante non può invertire gli hash e in questo modo solo l'utente conosce la sua pw
-    - tuttavia le pw degli utenti abbiamo già visto essere poco casuali
-    - diventa possibile precomputare l'hash di pw comuni e vedere se si trova un match (attacco con dizionario) 
-    - contromisure all'attacco con dizionario (rainbow table) è aggiungere un salt alla password prima dell'hash. In questa maniera l'attaccante dovrà ricomputare il dizionario, e se si usa appositamente una funzione di hash particolarmente lenta, questo rende l'attacco infattibile. (guarda salt.md)
+    - tuttavia le pw degli utenti abbiamo già visto essere **poco casuali**
+    - diventa possibile **precomputare l'hash di pw comuni** e vedere se si trova un match (attacco con dizionario) 
+    - contromisure all'attacco con dizionario (rainbow table) è aggiungere un salt alla password prima dell'hash. In questa maniera l'attaccante dovrà ricalcolare il dizionario per ogni salt che però diventerà enorme 
+        - per ogni salt devo provare tutte le password 
+        - pwd nel dizionario = 10^6 ; num pwd == num utenti = 10^3 -> **num hash da calcolare = 10^6*10^3 = 10^9**
+    - e se si usa appositamente una funzione di hash particolarmente lenta (KDF), questo rende l'attacco infattibile. (guarda salt.md)
 
 Un’ultima osservazione sulla debolezza intrinseca dell’identificazione passiva: 
 - l’utente deve essere certo a priori che il **verificatore è veramente quello da cui vuole farsi riconoscere**. 
