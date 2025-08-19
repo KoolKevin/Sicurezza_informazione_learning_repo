@@ -1,6 +1,6 @@
 Kerberos è un **servizio di Autenticazione** per un ambiente client/server
 
-Compito del sistema è il **controllo d’accesso (identificazione**) ad un insieme di server che offrono servizi distribuiti da parte di una comunità di utenti avente a disposizione un certo numero di workstation.
+Compito del sistema è il **controllo d’accesso (identificazione)** ad un insieme di server che offrono servizi distribuiti da parte di una comunità di utenti avente a disposizione un certo numero di workstation.
 - Consente quindi a un utente tramite la propria workstation (comunità di utenti tipicamente piccola, ambito di tipo aziendale) di autenticarsi mutuamente su un server (tra tanti disponibili) e accedere al servizio fornito.
 
 Il servizio di autenticazione si **ispira al modello del KDC**
@@ -25,8 +25,10 @@ sui server?
 - relazione di fiducia tra i server ed il server di autenticazione (**singola**).
     - I server accettano tutti i messaggi autenticati dal server di autenticazione
 - permette Single Sign On
+    - credenziali singole per accedere a tutti i servizi
     - le informazioni di autenticazione sono mantenuta da questo server centralizzato e non distribuite in giro
     - non ci sono problemi di sincronizzazione
+    - **NB**: SSO è possibile siccome tutti i servizi hanno una relazione di fiducia con AS (o meglio, con TGS)
 - permette di autenticare gli utenti ai server e i server agli utenti.
 
 
@@ -161,7 +163,7 @@ Come dimensionare la durata dei ticket?
 ### Kerberos v3
 Per ogni dominio di amministrazione Kerberos esiste un AS e un TGS.
 
-Vi è una serie di **precondivisione di segreti**:
+Vi è una serie di **precondivisione di segreti (instaurazione di relazioni di fiducia)**:
 - Gli utenti precondividono segreti con gli AS,
 - gli AS con i TGS
 - i TGS con i servizi
