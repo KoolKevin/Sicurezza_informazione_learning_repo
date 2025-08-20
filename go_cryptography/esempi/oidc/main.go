@@ -12,7 +12,7 @@ import (
 	"os"
 
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/github"
+	"golang.org/x/oauth2/google"
 
 	// libreria per gestione di file .env
 	"github.com/joho/godotenv"
@@ -33,7 +33,7 @@ func generateState() (string, error) {
 var (
 	logger           *slog.Logger
 	oauthConf        *oauth2.Config
-	githubApiBaseURL = "https://api.github.com"
+	googleApiBaseURL = "https://api.github.com"
 	// "It’s important to generate a randome 'state' parameter to use to protect the client from CSRF attacks.
 	//  GitHub will redirect the user back here with the state in the query string, so we can verify it matches
 	//  before exchanging the authorization code for an access token"
@@ -66,30 +66,31 @@ func main() {
 	logHandler := slog.NewJSONHandler(os.Stderr, logOptions)
 	logger = slog.New(logHandler)
 
-	/* setup oauth */
+	/* setup OIDC */
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
 	// salvo un puntatore dato che i metodi del tipo oauth.Config
 	// hanno pointer receiver e quindi mi risparmio una conversione
 	// (risparmio anche delle copie)
 	oauthConf = &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		Scopes:       []string{"user", "public_repo"},
+		Scopes:       []string{"openid", "email"},
 		// gli endpoint che mi interessano sono
-		// AuthURL:  	"https://github.com/login/oauth/authorize",
-		// TokenURL:	"https://github.com/login/oauth/access_token",
-		Endpoint:    github.Endpoint,
+		// - https://accounts.google.com/o/oauth2/v2/auth -> per ottenere l'authorization code
+		// - https://www.googleapis.com/oauth2/v4/token -> per ottenere id-token e access-token
+		Endpoint:    google.Endpoint,
 		RedirectURL: serverBaseUrl + "/callback",
 	}
 
-	/* Setup server (Client OAuth che richiede autorizzazioni) */
+	/* Setup server (Client OIDC) */
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handleMain)
-	mux.HandleFunc("/get-authorization", handleAuthorization)
+	mux.HandleFunc("/login", handleLogin)
 	mux.HandleFunc("/callback", handleCallback)
 	mux.HandleFunc("/repos", handleRepos)
 
@@ -108,8 +109,8 @@ func main() {
 func handleMain(w http.ResponseWriter, r *http.Request) {
 	html := `<html>
 				<body>
-					<h2>Usa OAuth per far ottenere all'applicazione l'autorizzazione per la visualizzazione delle repo</h2>
-					<a href="/get-authorization">Get authorization from Github</a>
+					<h2>Usa OIDC (e google come identity provider) per autenticarti</h2>
+					<a href="/login">Login with google</a>
 				</body>
 			</html>`
 	fmt.Fprint(w, html)
@@ -117,19 +118,14 @@ func handleMain(w http.ResponseWriter, r *http.Request) {
 
 // Chiedi autorizzazione all'utente (redirect verso GitHub)
 // oppure se hai già l'access token vai direttamente alla pagina delle repo
-func handleAuthorization(w http.ResponseWriter, r *http.Request) {
+func handleLogin(w http.ResponseWriter, r *http.Request) {
 	f, err := os.Open("token.json")
 	if err != nil {
 		// costruisco l'url con i parametri corretti (client-id, scopes, callback url, ...)
 		// per ottenere l'authorization code
 		url := oauthConf.AuthCodeURL(
 			oauthStateString,
-			// Forza la schermata di consenso.
-			//
-			// SUPPONGO che a default AS vada a controllare se c'è già un access-token
-			// per il client-id richiedente. Se si, AS sa già il Client è già stato
-			// autorizzato dall'utente in passato e quindi non c'è bisogno di mostrare
-			// la schermata
+			// Forza la schermata di consenso per le autorizzazioni richieste
 			oauth2.ApprovalForce,
 		)
 		logger.Debug("url per la richiesta di autorizzazione:", "url", url)
@@ -143,7 +139,7 @@ func handleAuthorization(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 }
 
-// Callback da GitHub
+// Callback da Google
 func handleCallback(w http.ResponseWriter, r *http.Request) {
 	// controllo che il parametro 'state' nell'url combaci
 	state := r.FormValue("state")
@@ -194,7 +190,7 @@ func handleRepos(w http.ResponseWriter, r *http.Request) {
 
 	// Chiamata alle api del resource server (github).
 	// La richiesta è autorizzata grazie all'access-token
-	resp, err := client.Get(githubApiBaseURL + "/user/repos?sort=created&direction=desc")
+	resp, err := client.Get(googleApiBaseURL + "/user/repos?sort=created&direction=desc")
 	if err != nil {
 		http.Error(w, "Errore richiesta API: "+err.Error(), http.StatusInternalServerError)
 		return

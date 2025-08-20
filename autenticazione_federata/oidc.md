@@ -1,3 +1,6 @@
+```There are several ways different services provide a way for an app to find out the identity of the user. A simple way is for the API to provide a _“/userinfo”_ endpoint which will return the authenticated user’s name and other profile info when an API call is made with an access token. This is a common approach many services have taken. A more advanced and standardized approach is to use OpenID Connect, an OAuth 2.0 extension.```
+
+
 OAuth 2.0 is designed only for **authorization**
 - granting access to data and features from one application to another.
 
