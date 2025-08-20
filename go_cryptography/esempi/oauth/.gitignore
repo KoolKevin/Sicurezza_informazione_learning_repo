@@ -1,0 +1,4 @@
+.env
+token.json
+cert.pem
+priv_key.pem
