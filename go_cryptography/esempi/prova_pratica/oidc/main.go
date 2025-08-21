@@ -309,7 +309,7 @@ func handleReserved(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Debug("json ricevuto:", "repos", profile)
+	logger.Debug("json ricevuto:", "profile", profile)
 
 	fmt.Fprintf(w, `    <br>
 						<p>ho anche richiesto la tua foto profilo. Eccola qua</p>

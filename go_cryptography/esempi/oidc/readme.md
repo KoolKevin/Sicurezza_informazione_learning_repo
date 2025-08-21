@@ -1,1 +1,0 @@
-*OpenID Connect workflow with the Google API to identify the user who signed in to your application.*
