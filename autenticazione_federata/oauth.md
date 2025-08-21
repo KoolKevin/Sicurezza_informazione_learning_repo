@@ -127,8 +127,9 @@ Il servizio eseguirebbe, ad alto livello dei passi simili a questi:
     - permette al Client di ottenere l'access token se riesce ad identificarsi correttamente con AS
     - è un qualcosa che mi dice che i passi 1-5 sono stati già fatti (Resource Owner è stato identificato ed ha concesso le autorizzazioni al Client)
     - **perchè AS non può mandare direttamente l'access token?**
-        - il Client deve dimostrare identificarsi, questo è un modo per farlo
-        - penso anche per evitare esposizione dell'access token durante la redirezione e quindi contromisura ad attacchi di replica
+        - il Client deve identificarsi, questo è un modo per farlo
+        - penso anche per evitare esposizione dell'access token durante la **redirezione** e quindi contromisura ad attacchi di replica
+            - le redirezioni sono problematiche (attacchi CSRF)
         - l'access token serve solamente al Client, non serve ne al resource owner ne al browser
 
 - Qua siamo in un contesto federato (quasi centralizzato)
