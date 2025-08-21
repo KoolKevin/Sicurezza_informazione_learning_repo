@@ -122,6 +122,17 @@ func handleAuthorization(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// costruisco l'url con i parametri corretti (client-id, scopes, callback url, ...)
 		// per ottenere l'authorization code
+		//
+		// Equivalente a questo:
+		//
+		//   $params = array(
+		//   'response_type' => 'code',
+		//       'client_id' => $githubClientID,
+		//       'redirect_uri' => $baseURL,
+		//       'scope' => 'user public_repo',
+		//       'state' => $_SESSION['state']
+		//    );
+		//    header('Location: '.$authorizeURL.'?'.http_build_query($params));
 		url := oauthConf.AuthCodeURL(
 			oauthStateString,
 			// Forza la schermata di consenso.
@@ -158,7 +169,18 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 
 	// uso authorization code per ottenere l'access token
 	// (client-id e client-secret sono già specificati dentro a oauthConf.
-	//  Qui viene L'authorization server identifica il Client)
+	//  Qui L'authorization server identifica il Client!)
+	//
+	// Equivalente a questo:
+	//  $token = apiRequest($tokenURL, array(
+	//     'grant_type' => 'authorization_code',
+	//     'client_id' => $githubClientID,
+	//     'client_secret' => $githubClientSecret,
+	//     'redirect_uri' => $baseURL,
+	//     'code' => $_GET['code']
+	//  ));
+	//  $_SESSION['access_token'] = $token['access_token'];
+	//  header('Location: ' . $baseURL);
 	token, err := oauthConf.Exchange(context.Background(), code)
 	if err != nil {
 		http.Error(w, "Code exchange failed: "+err.Error(), http.StatusInternalServerError)
@@ -182,14 +204,14 @@ func handleRepos(w http.ResponseWriter, r *http.Request) {
 	var token oauth2.Token
 	f, err := os.Open("token.json")
 	if err != nil {
-		http.Error(w, "Token mancante. Effettua prima il login.", http.StatusUnauthorized)
+		http.Error(w, "Token mancante.", http.StatusUnauthorized)
 		return
 	}
 	defer f.Close()
 	json.NewDecoder(f).Decode(&token)
 
 	// crea un client http che usa l'access-token ottenuto
-	// le richieste sono autorizzate con questo header "Authorization: Bearer <access-token>"
+	// (le richieste sono autorizzate con questo header "Authorization: Bearer <access-token>")
 	client := oauthConf.Client(context.Background(), &token)
 
 	// Chiamata alle api del resource server (github).
