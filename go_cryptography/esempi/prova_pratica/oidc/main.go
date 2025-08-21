@@ -57,7 +57,7 @@ var (
 	// 	... mah, non è che abbia ben capito ...
 	oauthStateString, _ = generateState()
 
-	serverHost    = "localhost" // mi metto in ascolto su tutte le interfacce di rete
+	serverHost    = "localhost"
 	serverPort    = "8000"
 	serverBaseUrl = "https://" + serverHost + ":" + serverPort
 )
