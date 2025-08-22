@@ -1,20 +1,79 @@
-come è nata la blockchain?
+### Trust problem | problema che ha motivato la nascita della blockchain
+La tecnologia blockchain nasce nel contesto dei sistemi finanziari in cui è presente una **terza parte fidata** che fa da garante
 
-nasce dai sistemi finanziari nel contesto della **terza parte fidata** che fa da garante
+Pensa alle carte di credito
+- Most common option for payments. Each buyer and each seller has to **open a credit line in advance with a bank or a broker (terza parte fidata)**.
+- Then, for each transaction, **the third party has to confirm** that the buyer has the funds to complete the operation.
 
-questo modello ha alcune problematiche - **trust problem**: 
-- se la terza parte è offline io non posso procedere (e.g. non posso comprare una roba perchè non c'è la banca che assicura che io abbia i soldi)
-- data owenership: la terza parte fidata sa quello che stiamo facendo
-- ...
+This “simple” method of payment has several issues:
+- **la terza parte deve essere online**
+    - Timings: procedures can depend on the opening hours for banks and offices.
+    - se la terza parte è offline io non posso procedere con un pagamento/transazione
+- **dipendenza dalla terza parte**
+    - Costs: each intermediary can demand commissions for the service it provides, even large ones.
+    - Data ownership: the user is not the real owner of his/her data or his/her account; 
+        - la terza parte sa cosa sto facendo
+
+Cash money has clear advantages compared to credit cards:
+- it guarantees full anonymity.
+- it does not need third parties.
+
+However, there are other issues:
+- we need to “coin money”
+    - i.e. a third party that initially distributes the bills and that can be queried against their validity.
+- non è digitale, it works only offline.
+
+cio che vorremmo è ottenere il meglio dei due mondi, ovvero:
+- vogliamo poter validare le transazioni
+- **eliminando la terza parte fidata**
+- mantenendo così totale anonimità
+
+_Is it possible to get rid of **trusted third parties** to guarantee the authenticity of documents (vedi CA e certificato) and the validity of economic transactions between parties that **do not trust each other** (PGP non va bene (vabe, non aveva validità legale in ogni caso))?_
 
 
-anche il contante fisico ha dei problemi
-- non può essere utilizzato online
 
 
-l'idea di bitcoin è quella di un contante che può essere utilizzata online
-- l'idea non è nuova ma i predecessori di bitcoin si basavano tutti su una terza parte fidata centralizzata
-- la peculiarità di un bitcoin è stata quella di essere **decentralizzato**
+
+### Background sistemi distribuiti e decentralizzati
+We can categorise systems according to two criteria:
+- where the computation takes place
+- and **who makes the decisions**.
+
+Computation
+- Centralized: all operations are performed by a single node.
+- Distributed: operations are spread across all nodes.
+
+Governance
+- Centralized: one single node decides for all.
+- **Decentralized: each node participates in the decision-making process**.
+
+#### P2P network
+a network in which the computers of connected users act as both client and server.
+- Peers make a portion of their resources directly available to other network participants, **without the need for central coordination**.
+
+#### Failures
+A failure is a condition that causes a functional unit to fail to perform its required function.
+- Benign Failure: when a node stops performing the operations it is supposed to perform.
+    - Crash and omissions.
+- __Byzantine Failure__: when a node starts to perform arbitrary operations, not present in the correct flow of operations.
+
+
+## CONSENSO
+Distributed processes that have to agree on a single value (e.g., new status of the system).
+
+Properties
+- Agreement:
+    - If a correct process decides a value, then all correct processes eventually **decide the same value**
+- Termination:
+    - Every correct process eventually decides some value
+
+Il consenso è un po' quello che vogliamo ottenere con la blockchain, vogliamo che nodi in un sistema decentralizzato, che non si fidano tra di loro, riescano a mettersi daccordo sullo stato delle transazioni senza la terza parte fidata.
+
+**NB**:
+- **There is no DETERMINISTIC protocol that solves consensus** (in an asynchronous system where ...)
+- But is it often said that **blockchain solves consensus?**
+- We will see that this is not actually true. 
+
 
 
 
@@ -48,6 +107,25 @@ processi corretti = non in crash
 
 **blockchain è una soluzione al problema del consenso nel contesto di internet**
 
+
+
+
+
+
+
+### Bitcoin blockchain
+Three problems to solve:
+1.Where do we store the bills and the transactions?
+2.Who coins new money?
+3.Who or what gives value to the new currency? (outside the scope of this lecture)
+
+The blockchain is an attempt to answer these questions
+
+Bitcoin (cryptocurrency) -> Blockchain ("technology")
+
+l'idea di bitcoin è quella di un contante che può essere utilizzata online
+- l'idea non è nuova ma i predecessori di bitcoin si basavano tutti su una terza parte fidata centralizzata
+- la peculiarità di un bitcoin è stata quella di essere **decentralizzato**
 
 
 
