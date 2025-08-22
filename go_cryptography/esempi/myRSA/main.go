@@ -132,7 +132,8 @@ func decrypt_block(c, d, n *big.Int) *big.Int {
 	return p
 }
 
-const KEY_SIZE = 1024
+const KEY_SIZE = 1024 // in bits
+const KEY_SIZE_BYTES = KEY_SIZE / 8
 
 func encrypt_msg(msg []byte, e, n *big.Int) []*big.Int {
 	var msg_block []byte
@@ -141,9 +142,9 @@ func encrypt_msg(msg []byte, e, n *big.Int) []*big.Int {
 	i := 0
 
 	for i < len(msg) {
-		if i+KEY_SIZE < len(msg) {
-			msg_block = msg[i : i+KEY_SIZE]
-			i += KEY_SIZE
+		if i+KEY_SIZE_BYTES < len(msg) {
+			msg_block = msg[i : i+KEY_SIZE_BYTES]
+			i += KEY_SIZE_BYTES
 		} else {
 			msg_block = msg[i:]
 			i += len(msg) - i
@@ -156,22 +157,28 @@ func encrypt_msg(msg []byte, e, n *big.Int) []*big.Int {
 	return encrypted_blocks
 }
 
-// func decrypt_msg(c []*big.Int, d, n *big.Int) *big.Int {
+func decrypt_msg(c []*big.Int, d, n *big.Int) []*big.Int {
+	var decrypted_blocks []*big.Int
 
-// }
+	for _, blocco := range c {
+		decrypted_blocks = append(decrypted_blocks, decrypt_block(blocco, d, n))
+	}
+
+	return decrypted_blocks
+}
 
 func main() {
 	// msgBytes := []byte(`questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
 	// 					Se lo voglio più lungo della chiave, devo dividere in blocchi!`)
 
 	msgBytes := []byte(`questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
-Se lo voglio più lungo della chiave, devo dividere in blocchi!`)
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi! questo è il mio bel messaggio! Non può essere più lungo della chiave a causa delle operazioni di modulo.
+	Se lo voglio più lungo della chiave, devo dividere in blocchi!`)
 
 	p, q := generatePrivateNums(KEY_SIZE)
 	n := getN(p, q)
@@ -181,18 +188,15 @@ Se lo voglio più lungo della chiave, devo dividere in blocchi!`)
 
 	cipherBigInts := encrypt_msg(msgBytes, e, n)
 	fmt.Println("encrypted message:")
-	fmt.Println(cipherBigInts[0].Text(16)) // trasformo bigInt in stringa esadecimale
+	fmt.Printf("\t - DIM: \t %d blocchi da %d bit\n", len(cipherBigInts), KEY_SIZE)
+	for i, blocco := range cipherBigInts {
+		fmt.Printf("\t - BLOCCO %d:\t %s\n", i, blocco.Text(16)) // trasformo bigInt in stringa esadecimale
+	}
 
-	plainBigIntDecrypted := decrypt_block(cipherBigInts[0], d, n)
-
-	plaintextDecrypted := plainBigIntDecrypted.Bytes()
-	fmt.Printf("messaggio orginale: %s\n", plaintextDecrypted)
-
-	// if plainBigInt.Cmp(plainBigIntDecrypted) == 0 {
-	// 	fmt.Println("messaggio cifrato e decifrato con successo")
-	// 	plaintextDecrypted := plainBigIntDecrypted.Bytes()
-	// 	fmt.Printf("messaggio orginale: %s\n", plaintextDecrypted)
-	// } else {
-	// 	fmt.Println("sbagliato qualcosa")
-	// }
+	plainBigInts := decrypt_msg(cipherBigInts, d, n)
+	fmt.Println("decrypted message:")
+	for _, blocco := range plainBigInts {
+		fmt.Printf("%s", blocco.Bytes())
+	}
+	fmt.Println()
 }
