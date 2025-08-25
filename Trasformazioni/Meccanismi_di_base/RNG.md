@@ -33,7 +33,7 @@ TRNG richiedano in generale:
 **Problemi**:
 -  **la frequenza di produzione dei dati casuali è bassa** e bisogna quindi o accontentarsi di stringhe relativamente corte o usare risultati calcolati in precedenza e poi memorizzati in un apposito random pool. 
 - **riproducibilità impossibile**: a volte è richiesta la generazione di sequenze di bit casuali identiche in calcolatori diversi. 
-    - Meccanismi come one-time pad ed i cifrari a flusso richiedono la generazione di sequenze di bit casuali identiche (quindi pseudo-casuali) in calcolatori diversi.
+    - Meccanismi come one-time pad ed i **cifrari a flusso** richiedono la generazione di sequenze di bit casuali identiche (quindi pseudo-casuali) in calcolatori diversi.
 
 
 
@@ -45,16 +45,16 @@ Per risolvere le problematiche dei TRNG si utilizzano **algoritmi deterministici
 Il modello di tali generatori algoritmici, detti pseudocasuali o PRNG (Pseudo Random Number Generator), è **l’automa a stati finiti** illustrato nella figura. Un automa a stati finiti è considerato un PRNG solo se supera i test di casualità.
 
 ![alt text](../immagini/PRNG.png)
-- blocco F computa il bit da generare dato lo stato corrente
-- blocco G computa lo stato futuro dato lo stato corrente
-- lo stato iniziale è fornito dal seme S0
+- blocco F computa il bit da generare dato lo stato corrente (**funzione di uscita**)
+- blocco G computa lo stato futuro dato lo stato corrente (**funzione di stato futuro**)
+- lo **stato iniziale** è fornito dal seme S0
 
 
 Garantisce casualità, riproducibilità e alta frequenza di generazione, ma **non imprevedibilità**. 
 
 
 I PRNG differiscono dai TRNG per vari aspetti:
-- la sequenza di numeri casuali prodotta **ad un certo punto si ripete (periodo limitato)**
+- la sequenza di numeri casuali prodotta **ad un certo punto si ripete (periodo limitato; d'altrode è un automa a stati FINITI)**
 
 - le sotto-sequenze ottenibili **al variare del seme** sono molto meno di quelle teoricamente possibili per una vera sorgente di rumore.
     - Una vera sorgente di rumore (cioè un TRNG - True Random Number Generator) è teoricamente in grado di generare qualsiasi possibile combinazione di bit.    

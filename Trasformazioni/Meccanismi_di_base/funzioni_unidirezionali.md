@@ -13,6 +13,7 @@ OSS: Non si può escludere a priori che esistano anche alcuni risultati facili d
 - è invertibile,
 - facile da calcolare
 - e se per quasi tutti gli x appartenenti al dominio di f è difficile risolvere per x il problema y = f (x).
+    - Nota: difficile sempre e comunque per tutti gli utenti, siano essi attaccanti o utenti legittimi.
 
 Due notizie, una cattiva ed una buona.
 - La cattiva è che finora la Teoria della complessità computazionale non è riuscita a dimostrare l’esistenza delle funzioni unidirezionali.

@@ -63,6 +63,8 @@ Per ogni direzione è, infatti, richiesto:
 - un primo dato segreto per autenticare/verificare l’impronta di ogni blocco di dati scambiato (HMAC),
 - un secondo dato segreto per inizializzare il Cifrario simmetrico che cifra/decifra i blocchi
     - (un vettore di inizializzazione se si usa la modalità CBC, un seme se si usa OFB o CFB),
+    - notare che deve essere presente da entrambi i lati (se cifro usando un IV/seed, devo decifrare usando lo stesso IV/seed)
+        - sono due perchè cifro in maniera diversa per lato
 - un terzo dato segreto per definire la chiave di sessione ks del Cifrario a blocchi. 
 
 Lo **stato di una connessione** è composto in sostanza da questi sei segreti:
