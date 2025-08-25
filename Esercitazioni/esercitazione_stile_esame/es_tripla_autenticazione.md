@@ -1,9 +1,9 @@
 Alice -> Bob
 
 Tre requisiti di autenticazione:
-1. autore del messaggio
-2. mittente (che può essere diverso dall'autore) del messaggio
-3. host
+1. autore del messaggio (-> Firma)
+2. mittente (che può essere diverso dall'autore) del messaggio (TLS)
+3. host (IPSec)
 
 
 Innanzitutto possiamo decidere di non fare a livello applicativo
@@ -22,6 +22,10 @@ Il resto dei requisiti vanno bene come gli abbiamo pensati noi a livello applica
 
 Non finisce qua!
 - possiamo delegare anche l'autenticazione del mittente con SSL
+    - basta quindi un HMAC
+
+Occore anche identificare
+- ricorda che qua basta presentare il certificato e poi il mittente viene identificato durante la fase di accordo sul segreto fatto con DH/cifrario ibrido (qui ce la POP/un intrusore non riesce a concordare lo stesso segreto) 
 
 La firma va fatta a livello appliativo per forza
 

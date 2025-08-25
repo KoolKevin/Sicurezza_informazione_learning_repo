@@ -20,7 +20,7 @@ Garantisce sempre confidenzialità e autenticazione
 
 IPSec è costituito di tre protocolli:
 - **Authentication Header (AH)**
-    - per autenticazione, integrità e origine dei pacchetti;
+    - per autenticazione, integrità e **origine** dei pacchetti;
 - **Encapsulating Security Payload (ESP)**
     - per la riservatezza delle informazioni dei pacchetti 
     - sia per riservatezza che autenticazione se configurato appositamente
@@ -139,6 +139,7 @@ Modalità tunnel e modalità di trasporto in IPsec rappresentano la modalità di
     - prevede che il pacchetto IPsec sia direttamente instradabile sulla rete pubblica (infatti ip sorgete e destinazione rimangono inalterati)
 - È tipicamente impiegata quando i due end-point sono degli end-system.
 - Visto che l’intestazione del pacchetto IP originale non è alterata (contiene gli indirizzi IP sorgente e destinazione originali). Il pacchetto ipsec è sempre instradabile qualsiasi sia la configurazione dei peer (H2H, G2G, ...)
+- **NOTA**: se si usa AH in modalità trasporto, gli header vengono comunque autenticati, con ESP no dato che questo protocollo opera solo sul payload al contrario di AH
 
 
 **Tunnel mode**
