@@ -288,6 +288,7 @@ Two main types of transaction:
 
 ### Conclusioni:
 In sostanza la blockchain è una tecnologia che permette di avere una struttura dati condivisa immutabile tra dei peer in un sistema decentralizzato che raggiungono un consenso sullo stato di questi dati senza fidarsi l'uno dell'altro
+- in pratica, una forma speciale di database distribuito
 - bitcoin si limita a rappresentare transazioni monetarie su questa struttura dati
 
 Il trustless consensus si raggiunge in quanto tutti i nodi considerano valida la catena più lunga
