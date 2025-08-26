@@ -62,6 +62,7 @@ Come prima cosa apre un conto presso A, uno presso B ed ordina ad A di trasferir
 Pro:
 - Alto parallelismo: i blocchi sono tra loro indipendenti e quindi possono venire cifrati in parallelo 
 - Non propagazione degli errori.
+
 Contro:
 - a blocchi identici di testo in chiaro corrispondono blocchi identici di testo cifrato.
 - suscettibile ad attacchi di chosen plaintext (malleabilità)
@@ -102,6 +103,9 @@ Il primo blocco di testo in chiaro (che non ha un cifrato precedente) viene mess
         - altrimenti blocchi iniziali uguali appartenenti a messaggi in generale diversi vengono cifrati allo stesso modo.
         - se i messaggi sono uguali vengono cifrati nello stesso modo
     - Inoltre deve essere casuale e imprevedibile
+        - altrimenti CBC vulnerabile a block injection attacks (un caso specifico di chosen plaintext attack)
+            - vedi Beast attack
+        - conoscendo l'IV che verrà utilizzato posso provare a costruire un messaggio che verrà cifrato come uno precedente su cui sto facendo ipotesi annullando pezzi che mi danno fastidio sfruttando lo xor
     - per questi motivi **i vettori di inizializzazione vengono generati con PRNG**
     - questo requisito non viene sempre rispettato (vedi **beast attack** dopo in TLS/SSL)
 
@@ -213,7 +217,7 @@ Performante in quanto parallelizzabile!
 l'attaccante può:
 - intercettare i messaggi cifrati
 - iniettare messaggi nel canale che verranno a loro volta cifrati
-    - o, equivalentemente, convincere/ingannare il mittente legittimo a mandare messaggi il cui contenuto è deciso dall'attaccante 
+    - o, equivalentemente, convincere/ingannare il mittente legittimo a mandare messaggi, il cui contenuto è deciso dall'attaccante, che verranno cifrati 
 
 `CBC residue` = roba con cui faccio lo xor prima di cifrare = IV || cifrato del blocco precedente
 
@@ -234,18 +238,18 @@ Mettiamo un chiaro un dubbio che potrebbe venire (che mi è venuto):
 - NO!
 - nel contesto di rete di TLS l'attaccante può fare attacchi attivi anche **durante la cifratura** e non solo dopo
     - in un contesto locale la cifratura inizia, finisce, e poi vengono eventualmente mandati i blocchi cifrati. 
-    - In TLS, **la cifratura non ha una fine**. Ho una sessione attiva e posso continuare a mandare messaggi quanto mi pare
-    - A questo punto il fatto che il fatto che il CBC residue di ogni blocco sia prevedibile è cio che mi **abilita un chosen-plaintext attack**
-    - Se l'attaccante può iniettare blocchi, o alternativamente convincere/ingannare il mittente legittimo ad inviare il suo messaggio, nella sessione TLS (inviare blocchi che subiranno cifratura come se fosse il mittente lecito), esso può inserire un blocco in chiaro che verrà cifrato esattamente come un blocco precedente rompendo così la riservatezza
+    - In TLS, **la cifratura non ha una fine**. Ho una sessione attiva e posso continuare a mandare messaggi fino a quando mi pare
+    - A questo punto, il fatto che il CBC residue di ogni blocco sia prevedibile è cio che mi **abilita un chosen-plaintext attack**
+    - Se l'attaccante può iniettare blocchi (o alternativamente convincere/ingannare il mittente legittimo ad inviare il suo messaggio) nella sessione TLS (blocchi che subiranno cifratura), esso **può inserire un blocco costruito appositamente da venire cifrato esattamente come un blocco precedente di cui sta ipotizzando il contenuto, rompendo così la riservatezza**
 
 Remember that if you XOR the same value twice, the second undoes the effect of the first.
 - m1 = la mia ipotesi sul contenuto di un messaggio = Kimberly
 - K = CBC residuo al blocco 1 = cifratura del blocco 1
 - K1 = CBC residuo al blocco 2 = cifratura del blocco 2
-- m1^K = m1^k1^k^k1
+- m1^K = m1^K1^K^K1
 
 **TRUCCO** (guarda le figure sulle slide o qua https://commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art027): 
-- Al blocco 3 non do come input m1 ma: m1 ^ K1 ^ K
+- Al blocco 3 non do come input 'm1' ma: 'm1^K1^K'
     - **l'attaccante conosce già il CBC residue che verrà utilizzato per cifrare il terzo blocco**, è il secondo blocco cifrato! 
 - così durante la cifratura del blocco 3
     - **K1 si annulla**
@@ -302,14 +306,8 @@ L'idea chiave è che se troviamo due ciphertext block uguali Ci ​= Cj, allora 
 - Basta riordinare i termini ed otteniamo che **lo xor dei cifrati precedenti è uguale allo xor dei plaintext correnti**
     - `Pi ​⊕ Pj ​= Ci−1 ​⊕ Cj−1`
 ​
+
 **cosa concludiamo**
 - La probabilità che un attaccante trovi due blocchi di testo cifrato uguali scala con 2^(n/2) e non con 2^n
 - dopo 2^(n/2) cifratura continuare a cifrare con la stessa chiave non è più consigliato
 - un cifrario a blocchi è sicuro **se e solo se i blocchi hanno dimensione >= 128 bit**
-
-
-
-
-
-## (domande chiave esame)
-guarda google doc

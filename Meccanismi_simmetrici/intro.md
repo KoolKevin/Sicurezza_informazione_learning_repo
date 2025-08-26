@@ -1,4 +1,4 @@
-### Che cos'è la ridondanza del testo in chiaro? 
+### innanzitutto ricorda questo | Che cos'è la ridondanza del testo in chiaro? 
 Si riferisce al fatto che non tutte le combinazioni di simboli sono equiprobabili o casuali, ma seguono schemi prevedibili, soprattutto nel linguaggio naturale.
 
 Prendiamo il linguaggio italiano:
@@ -28,7 +28,7 @@ Shannon ha infine indicato il modello del **cifrario composto** come linea guida
 
 La struttura di un cifrario composto alterna, di conseguenza, stadi di sostituzione (detti S-box) e di permutazione o trasposizione (detti P-box o T-box) per creare confusione e diffusione. 
 - per ottenere confusione e diffusione si combinano sostituzione e trasposizione in maniera iterata
-
+- vedi reti di feistel
 
 ### Cifrari simmetrici
 Tipicamente sono usati per la difesa della riservatezza, ma sono impiegati anche come meccanismi per

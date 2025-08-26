@@ -14,7 +14,7 @@ La sicurezza del metodo è concentrata nella generazione di una stringa di bit a
 ### Due tipi di cifrari a flusso
 - A **flusso sincrono**:
     - **il flusso dei bit di chiave è indipendente dal flusso dei bit di testo cifrato**.
-        - in pratica o un ASF che mi fa da PRNG che NON ha alcun input proveniente dal testo cifrato 
+        - in pratica ho un ASF che mi fa da PRNG che NON ha alcun input proveniente dal testo cifrato 
     - Per un corretto funzionamento i generatori di trasmissione e di ricezione devono mantenersi al passo:
         - quando si verifica un disallineamento, sorgente e destinazione devono far ripartire i due generatori, **curando anche di scegliere un diverso punto di inizio della sequenza**.
             - In caso di inserimento o cancellazione di un bit (**nel cifrato inviato**) da parte di un attaccante, si perde il sincronismo e bisogna risincronizzare utilizzando un seme diverso.
