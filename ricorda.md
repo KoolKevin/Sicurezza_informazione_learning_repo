@@ -36,6 +36,7 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
 
 4. Cifrari a flusso
     - sono in pratica uno xor con un flusso di chiave pseudocasuale
+    - il flusso di chiave prodotto si basa su un seed. Questo deve essere scambiato in segreto da sorgente e destinazione altrimenti un attaccante può riprodurre lo stesso flusso di chiave
     - possono essere
         - a flusso sincrono             -> flusso di chiave generato con un PRNG (funzioni di F e G)
         - a flusso autosincronizzante   -> flusso di chiave generato con un registro a scorrimento (in cui ci finisce in retroazione l'uscita prodotta) e una funzione F 
@@ -81,6 +82,7 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
             - CFB un Cifrario a flusso con auto-sincronizzazione
         - impiegano la sola trasformazione E per generare un flusso di chiave
             - identico lato sorgente e lato destionazione
+            - notare in queste implementazini, un attaccante che conosce il seed non può comunque riprodurre lo stesso flusso di chiave dato che non ha la chiave k
         - il flusso di chiave è sempre diverso grazie ad un IV che fa da seed
         - malleabilità quindi prevenuta dato che non si riescono a trovare due messaggi cifrati con lo stesso flusso di chiave
     - Counter

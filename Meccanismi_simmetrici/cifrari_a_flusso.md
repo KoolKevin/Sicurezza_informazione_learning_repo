@@ -8,7 +8,7 @@ La sicurezza del metodo è concentrata nella generazione di una stringa di bit a
 
 - La sicurezza non è perfetta ma abbiamo già osservato che se la stringa dei bit di chiave ha un periodo grandissimo, ciò consente di suddividere la sequenza in moltissime sottosequenze e di rendere **imprevedibile** quella che viene di volta in volta impiegata tramite un **seme casuale concordato in segreto dai due corrispondenti**. 
 - affinchè la decifrazione avvenga correttamente devo avere **perfetto sincronismo** e lo **stesso seed** del PRNG
-    - i corrispondenti devono scambiarsi il seed il segreto
+    - i corrispondenti devono scambiarsi il seed in segreto
 
 
 ### Due tipi di cifrari a flusso
