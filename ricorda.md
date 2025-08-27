@@ -130,3 +130,27 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
     - I dati **p e g, NON sono segreti**, devono essere **noti ed uguali per entrambi** e quindi vengono comunicati in chiaro. 
         - Ad esempio chi inizia il protocollo può deciderli e comunicarli al corrispondente insieme al suo dato Y
         - in fixed DH sono presenti nel certificato
+
+8. Certificati
+    - i certificati vengono firmati da una terza parte fidata, questo garantisce l'autenticità tra l'associazione di identità e chiave pubblica presente nel certificato
+    - per identificare correttamente un interlocutore che non si conosce a priori, è necessario:
+        - sia il certificato -> che associa una identità ad una chiave pubblica
+        - che la POP         -> che dimostra che che il mittente è il proprietario della chiave pubblica presentata (e per transitività, identifica il mittente con l'identità presente nel certificato)
+
+9. CRL
+    - listone di tutti i certificati revocati
+    - viene emessa ed aggiornata periodicamente
+    - struttura simile ad un certificato nel senso che è firmata da una CA ed ha un periodo di validità (fino alla prossima emissione)
+    - Può diventare molto grande è quindi è importante adottare delle tecniche che consentono di ridurre la dimensione/la quantità di dati da trasferire all'utente
+        - elimino certificati revocati già presenti in CRL vecchie  -> assolutamente no
+        - pubblico i diff                                           -> aiuta solo la bandwidth
+        - sotto-liste                                               -> si grazie
+    - problema della freschezza, tra un aggiornamento e l'altro potrebbero essere stati revocati dei certificati -> c'è anche OCSP
+
+10. Gerarchia delle CA
+    - non tutti gli utenti vengono certificati dalla stessa CA
+    - le CA sono in relazione gerarchica, questo permette di trasferire la fiducia
+        - se io mi fido della mia CA e la mia CA si fida di CA_B, allora anche io mi fido di CA_B
+    - bisogna trovare le catene di fiducia (catene di certificati) fino ad una root-CA e verificarle
+    - cross-certificates sono certificati che certificano la chiave pubblica di un altra CA
+        - certificano i nodi intermedi del percorso di fiducia
