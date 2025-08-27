@@ -9,8 +9,8 @@ I cifrari simmetrici abbiamo visto essere impiegati più per la riservatezza che
 
 ### Le proprietà delle chiavi in un cifrario asimmetrico
 Un certo utente che vuole rendersi disponibile per la comunicazione **genera una coppia di chiavi** impiegando un **algoritmo di generazione**
-- Priva si genera la chiave privata 
-    - numero casuale che però può avere delle proprietà particolari
+- Prima si genera la chiave privata 
+    - numero casuale con delle proprietà particolari
         - per questo si uso un algoritmo di generazione apposito
         - primo molto grande se si usa esponenziazione modulare
 - La chiave pubblica si può generare facilmente (algoritmo polinomiale) a partire dalla chiave privata. 
@@ -138,10 +138,18 @@ Chi riceve un certificato emesso da T
 - e solo in caso di verifica positiva **trasferisce su PX la “fiducia” che ha su PT**. 
 
 
-slide 8: quello che c'è da capire è che il fatto di verificare la firma di un messaggio (integro) allegedly proveniente da X, firmato con una chiave privata (allegedly di X), mi da solo la certezza che il mittente di quel messaggio abbia la chiave privata e non che sia effettivamente X. 
+**Molto importante**
+quello che c'è da capire è che il fatto di verificare la firma di un messaggio (integro) allegedly proveniente da X, firmato con una chiave privata (allegedly di X), mi da solo la certezza che il mittente di quel messaggio abbia la chiave privata e non che sia effettivamente X (POP). 
 - **senza certificato manca l'identificazione del mittente, ho solo la prova di possesso**
 - quando **l'ente fidato verifica sia prova di possesso, che identificazione**, allora rilascia il certificato (che ha la forma mostrata nella slide)
 - anche i certificati restituiti dalla CA sono firmati e resi integri, per cui anche i CA distribuiscono una chiave pubblica
+
+Allo stesso modo, se uno presenta un certificato (che ricordiamo essere pubblico) non è detto che sia il proprietario della chiave pubblica al suo interno
+- bisogna verificare che abbia anche la relativa chiave privata (POP) altrimenti, di nuovo, manca l'identificazione del mittente
+
+**In conclusione**: per identificare correttamente un interlocutore che non si conosce a priori, è necessario:
+- sia il certificato -> che associa una identità ad una chiave pubblica
+- che la POP         -> che dimostra che che il mittente è il proprietario della chiave pubblica presentata (e per transitività, identifica il mittente con l'identità presente nel certificato)
 
 
 Occorre anche decidere chi può ricoprire il ruolo di T; due sono i modelli in uso.

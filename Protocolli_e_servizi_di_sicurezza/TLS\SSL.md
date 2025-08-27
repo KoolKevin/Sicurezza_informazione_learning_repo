@@ -149,6 +149,8 @@ come al solito non bisogna studiare a memoria il protocollo, piuttosto bisogna c
         - me ne accorgo in fase 4 quando verifico di aver scambiato lo stesso segreto
         - se il server non è chi dice di essere **la fase 4 non si chiude** (per questo è importante questa conferma finale)
 
+**NB**: TLS non fa identificazione esplicita (ad esempio, con sfida e risposta), piuttosto identifica implicitamente controllando nella fase finale dell'handshake se il segreto concordato è lo stesso
+- se non lo è significa che uno dei due interlocutori non è in possesso della chiave privata associata alla chiave pubblica dichiarata
 
 #### Attacco di redirezione
 Se uso solo il protocollo di handshake sono vulnerabile a redirezioni (di cui non mi accorgo)

@@ -23,7 +23,7 @@ Come prima cosa **genera un autocertificato della sua PX** (Certificate Signing 
 - **NB**:notare che la generazione della coppia di chiavi avviene **lato utente**
     - la PKI non vede mai la chiave privata -> l'utente sarà **l'unico possessore della chiave privata**
     - questo è importante per garantire la proprietà di **non ripudio** quando questa coppia di chiavi verrà poi utilizzata
-    - la CA potrà verificare che l'utente possegga la chiave privata (**POP**), verificando la firma presente nel CSR con la chiave pubblica presentata al suo interno
+    - la RA potrà verificare che l'utente possegga la chiave privata (**POP**), verificando la firma presente nel CSR con la chiave pubblica presentata al suo interno
     - in questa maniera e con le altre informazioni identificative presentate alla RA, l'utente viene identificato 
 
 A questo punto X fornisce a RA i suoi dati (tramite un’e-mail o una form, quando è richiesto un basso livello di sicurezza, presentandosi invece con documenti autenticati, quando il livello di sicurezza deve essere alto). 
@@ -118,6 +118,7 @@ svantaggi: non garantiscono la freschezza delle informazioni!
 - Se avviene una revoca in mezzo all'intervallo di tempo, non me ne accorgo fino al prossimo rilascio
 - limite: non garantisce mai freschezza in tempo reale per quanto io diminuisca l'intervallo di validità
 
+![alt text](img/crl.png)
 
 #### Problema della dimensione delle CRL
 Dato che di volta in volta la CRL cresce con l’aggiunta di nuovi certificati revocati, ci potrebbe essere un problema dal punto di vista della dimensione della CRL e quindi della dimensione delle strutture dati da scaricare. A tal proposito sono state elaborate delle soluzioni, tra cui:
@@ -156,7 +157,6 @@ Dato che di volta in volta la CRL cresce con l’aggiunta di nuovi certificati r
         - Si tratterà di una CRL molto piccola in confronto a quella che si avrebbe non partizionando.
         - Le partizioni sono talmente piccole da poter considerare questa come la soluzione migliore.
 
-Attenzione: se un’azienda avesse tanti utenti a cui inviare messaggi frequentemente, e ogni giorno aggiornasse la lista di certificati revocati, significa che per ogni utente a cui scrive deve scaricare una partizione: in questo caso, forse, per l’utente sarebbe meno onerosa la soluzione incrementativa. Dunque, quando diciamo che la terza soluzione è quella giusta, è perché pragmaticamente è quella più usata.
 
 
 
@@ -176,6 +176,7 @@ Un rimedio a questo problema è dato dal protocollo OCSP (Online Certificate Sta
 OCSP È un protocollo “client-server” in modalità “pull” che **funziona solo online** (al contrario delle CRL che una volta scaricate possono essere consultate offline). 
 - data una richiesta mi risponde con lo stato di revoca di un certificato
 - OCSP attinge informazioni dalle CRL ma non solo!
+    - magari chiede direttamente anche ad una CA (che riceve le richieste di revoca)
 - **Le risposte sono firmate dal server, non dalla CA!**
 - Il server OCSP avrà una coppia di chiavi certificata da una CA. 
 - Il certificato del server non è verificabile con OCSP
@@ -206,9 +207,9 @@ Non possiamo pensare che tutti gli utenti con cui si vuole comunicare appartenga
 
 Lo standard X.509 prevede una **gerarchia di Autorità**.
 
-quando un utente si registri presso una CA
+quando un utente si registra presso una CA
 - sicuramente nel certificato che riceve è contenuta la chiave pubblica della CA in cui si è registrato
-- inoltre, ottiene anche le chiavi pubbliche di altre CA delle quali la CA presso cui si è registrato
+- inoltre, ottiene anche le chiavi pubbliche di altre CA, della quali la CA presso cui si è registrato si fida
 - in particolare, assumiamo che un utente **oltre alla chiave pubblica della sua CA abbia anche la chiave pubblica della ROOT CA del suo dominio**
     - in questa maniera, un utente può cercare certificati di altre CA partendo dalla radice
 
@@ -217,6 +218,7 @@ Bisogna costruire il cosiddetto **cammino di fiducia**.
 - l'idea è quella di **trasferire la fiducia**: se io mi fido della mia CA, e la mia CA si fida della CA di un altro, allora io mi fido automaticamente anche della CA di questo qualcun'altro
 
 **Esempio | Modello distribuito**:
+
 ![alt text](img/catena_di_fiducia.png)
 
 - L'utente A invia un messaggio all'utente B 
@@ -275,7 +277,7 @@ Dunque, sebbene sia un modello più semplice da realizzare, non è detto che sia
 
 #### Modello di fiducia decentralizzato
 ... in pratica uguale a quello centralizzato ma meno strutturato
-- posso avere più root CA
+- posso avere più root CA che hanno cross-certificates tra di loro
 
 Chiedi a Piè ma non penso sia importante
 
