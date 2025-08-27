@@ -126,8 +126,7 @@ ho problemi se implemento in modalità ECB?
     - se al passo 5 non si modifica di molto R_B l'attaccante può provare a forgiare una risposta nel tentativo di impersonare qualcun'altro 
 - malleabilità
     - **con ECB e_k(A||B) diventa e_k(A)||e_k(B) se i blocchi sono allineati**
-    - se ho ottenuto la stessa chiave k da una sessione precedente posso spacciarmi per A, e tento l'attacco con replica al punto 3, non solo posso spacciarmi per A, ma posso spacciarmi per chi voglio!
-        - fai prima a vincere alla lotteria mi sa...
+    - Un A malevolo potrebbe spacciarsi per chi vuole sostituendo il blocco relativo all'identità nel passo 3!
 
 Il modello del KDC ha svariate limitazioni:
 - Deve essere sempre On-line (Single Point of Failure)
@@ -145,9 +144,9 @@ Ha comunque una sua indiscutibile validità, quando il numero degli utenti è re
 dopo aver ragionato in classe si è arrivati alla conclusione che anche questo protocollo è robusto. Per quanto riguarda la replica sarebbe inutile, non ci si fa nulla senza conoscere KA e KB.
 
 - 4 way invia un messaggio in meno tra i due interlocutori
-- 4 way effettua due operazioni di decifratura in più rispetto alle 0 si 5-way
-- A di 4 way fa una decifratura in meno
-- B di 4 way fa una decifratura in meno
+- 4 way effettua due operazioni di decifratura in meno rispetto alle 4 di 5-way
+    - A di 4 way fa una decifratura in meno
+    - B di 4 way fa una decifratura in meno
 
 con ECB cosa succede?
 - se non si tiene traccia delle chiavi già usate I può indurre B a riusare una chiave che lui conosce da una sessione precedente
@@ -179,7 +178,7 @@ L’obiettivo dello scambio DH è far si che due utenti qualsiasi A e B, **senza
 A tal fine è necessario che ciascuno dei due utenti **scelga a caso un numero X (che terrà segreto)** ed usi poi una **funzione unidirezionale F** per calcolare il numero **Y = F(X) da inviare al corrispondente**
 - in questo modo, l’intruso che riesce ad intercettare Y non dispone di algoritmi efficienti per calcolare il segreto X = F^-1(Y). 
 
-Una volta avvenuto lo scambio (A manda YA e B YB), il metodo prevede che A e B dispongano di una **particolare funzione G** che garantisca ad entrambi di **ottenere lo stesso risultato K (chiave di sessione)** a partire dai dati in loro possesso**:
+Una volta avvenuto lo scambio (A manda YA e B YB), il metodo prevede che A e B dispongano di una **particolare funzione G** che garantisca ad entrambi di **ottenere lo stesso risultato K (chiave di sessione)** a partire dai dati in loro possesso:
 - __G(XA,YB) = G(XB, YA) = K__
 - **NB**: ho comunicato solo roba pubblica YA, YB, ma **HO CONCORDATO UN SEGRETO CONDIVISO**
 
@@ -223,7 +222,7 @@ Il protocollo, nella sua versione più semplice detta DH anonimo, prevede quindi
 ![alt text](img/DH_anonimo.png)
 
 
-**NB**: chi ci garantisce, in questo tipo di scambio, che XB provenga davvero da B e viceversa?
+**NB**: chi ci garantisce, in questo tipo di scambio, che YB provenga davvero da B e viceversa?
 - nessuno! Ciascuno dei due utenti riceve un numero Y a cui non è associata alcuna indicazione sicura su chi l’ha inviato.
     - manca autenticità degli Y
 - **potrei star scambiando una chiave con un impostore man in the middle**
@@ -244,35 +243,3 @@ Una variante, proposta da ElGamal ed **adottata dal PGP**, prevede che:
 
 
 nota: fixed DH ed ephemeral DH, consentono a tutti e due i partecipanti di essere sicuri sull’origine della chiave pubblica ricevuta.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Lo scambio di chiavi Diffie-Hellman è un protocollo che permette a due utenti di scambiarsi una chiave segreta comunicando pubbicamente, senza rivelare la chiave segreta a degli attaccanti. 
-- non preconcordiamo prima un segreto (master key), lo concordiamo online sul momento
-- non c'è più bisogno di un accordo con cui cifrare le chiavi con cui comunichiamo, possiamo scambiare la chiave di sessione in maniera intelligente direttamente
-
-I due partecipanti:
-- concordano un numero casuale iniziale (possibilmente grande e primo in modo da annullare gli attacchi di forza bruta -> conseguenza di esponenziazione modulare) 
-    - Per concordare un numero devono comunicarselo e quindi renderlo pubblico
-    - Questo numero non può quindi essere la chiave
-- Tuttavia, i due partecipanti generano anche un numero casuale segreto (e quindi distinto) che sarà una sorta di "chiave segreta personale"
-- Chiaramente, non possiamo comunicare direttamente questi due nuovi numeri casuali, altrimenti saremmo punto e a capo. Tuttavia, se comunicassimo non direttamente le chiavi segrete, ma il **risultato di un operazione non facilmente reversibile** di quest'ultime con il primo numero casuale condiviso:
-    - le chiavi segrete non verrebbero comunicate in quanto mascherate dall'operazione non reversibile
-    - se l'operazione ha delle proprietà particolari (esponenziazione modulare), i due interlocutori **possono generare la stessa identica chiave di sessione** a partire solamente dai risultati dell'operazione non reversibile e quindi **senza mai essersi scambiati pubblicamente i loro segreti!**
-        - ripeto per la terza volta: è fondamentale che l'operazione sia non reversibile, altrimenti un attaccante in ascolto potrebbe recuperare la chiave segreta di un interlocutore a partire dal risultato dell'operazione tra segreto e numero casuale concordato. 
-
-... se vuoi capire più nel dettaglio riguardati il video del tipo coi cubi
-
-**OSS**: D-H classico è vulnerabile agli attacchi Man-in-the-Middle se non viene autenticato. Per questo spesso viene combinato con altri meccanismi di autenticazione, come certificati digitali o firme crittografiche.

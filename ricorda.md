@@ -100,3 +100,33 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
         - dopo 2^(n/2) cifratura continuare a cifrare con la stessa chiave non è più consigliato perchè diventa probabile produrre cifrature uguali
         - se produce cifrature uguali posso sfruttare le proprietà dello xor (varia in base alla modalità di cifratura in questione) per attuare un **two time key attack**
         - un cifrario a blocchi è sicuro se e solo se i blocchi hanno dimensione >= 128 bit
+
+6. Master Key e KDC vai prima a riguardarti gli appunti
+    - interessante l'utilizzo della cifratura con un segreto come strumento di identificazione
+        - solo se sei chi dici di essere saprai decifrare questo messaggio contenente la chiave di sessione
+
+7. DH anonimo
+    - L’obiettivo dello scambio DH è far si che due utenti qualsiasi A e B, **senza aver preso alcun precedente accordo segreto** (no master key sia essa in KDC o meno), riescano a **condividere un dato segreto K (chiave di sessione)** dopo aver calcolato ed essersi **scambiati senza alcuna segretezza due dati YA e YB (pubblici)**. 
+        - Non abbiamo più una terza parte fidata (KDC) e nemmeno una Master Key pre-concordata.  
+    - A tal fine, è necessario che ciascuno dei due utenti **scelga a caso un numero X (che terrà segreto)** ed usi poi una **funzione unidirezionale F** per calcolare il numero **Y = F(X) da inviare al corrispondente**
+        - in questo modo, l’intruso che riesce ad intercettare Y non dispone di algoritmi efficienti per calcolare il segreto X = F^-1(Y). 
+    - Una volta avvenuto lo scambio (A manda YA e B YB), il metodo prevede che A e B dispongano di una **particolare funzione G** che garantisca ad entrambi di **ottenere lo stesso risultato K (chiave di sessione)** a partire dai dati in loro possesso:
+        - __G(XA,YB) = G(XB, YA) = K__
+        - **NB**: ho comunicato solo roba pubblica YA, YB, ma **HO CONCORDATO UN SEGRETO CONDIVISO**
+    - Il protocollo, nella sua versione più semplice detta DH anonimo, prevede quindi solo due passi:
+        1. **Generazione delle chiavi segrete XA, XB e pubbliche YA, YB**
+            - A e B, dopo aver generato a caso rispettivamente i numeri 
+                - 1 < XA < p-1
+                - 1 < XB < p-1
+            - (che tengono segreti), calcolano
+                - YA = g^XA mod p
+                - YB = g^XB mod p
+            - e si scambiano i risultati in modo non riservato. 
+        2. **Calcolo del segreto K** 
+            -  A e B calcolano rispettivamente:
+                - KA = YB^XA mod p = (g^XB mod p)^XA mod p = (g^XB)^XA mod p
+                - KB = YA^XB mod p = (g^XA mod p)^XB mod p = (g^XA)^XB mod p
+            - **KA = KB = K**
+    - I dati **p e g, NON sono segreti**, devono essere **noti ed uguali per entrambi** e quindi vengono comunicati in chiaro. 
+        - Ad esempio chi inizia il protocollo può deciderli e comunicarli al corrispondente insieme al suo dato Y
+        - in fixed DH sono presenti nel certificato
