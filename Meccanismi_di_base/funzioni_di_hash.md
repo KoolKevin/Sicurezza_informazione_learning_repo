@@ -29,7 +29,7 @@ Le funzioni di hash seguono un'implementazione con schema di **compressione iter
 
 L’uscita dell’ultimo blocco è l’impronta del messaggio. 
 
-![alt text](../immagini/hash_compressione_iterata.png)
+![alt text](img/hash_compressione_iterata.png)
 
 
 
@@ -45,7 +45,7 @@ L’intruso può in questo caso condurre un attacco di length extension:
 - L’impronta H(m’) così ottenuta è **per costruzione uguale a quella di H(s||(m||m’))** e quindi **il messaggio forgiato dall’intruso sarà giudicato dalla destinazione come generato dalla sorgente (autentico e integro)**.
 - la destinazione è convinta che il mittente abbia mandato m||m' e non m
 
-![alt text](../immagini/length_extension.png)
+![alt text](img/length_extension.png)
 
 Lo standard d’inserire la lunghezza del messaggio in coda al messaggio rende questo attacco più difficile, ma **non impossibile** (c'è un padding prima dell'estensione, e uno dopo, ma il padding prima dell'estensione potrebbe essere considerato come parte con un  significato del messaggio).
 - facendo un doppio hash come in HMAC questa vulnerabilità scompare (da quello che si sà fino ad adesso) 

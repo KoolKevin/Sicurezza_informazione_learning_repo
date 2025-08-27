@@ -150,11 +150,11 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		)
 		logger.Debug("url per la richiesta di autenticazione:", "url", url)
 
-		http.Redirect(w, r, url, http.StatusSeeOther)
+		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 	} else {
 		logger.Debug("utente già autenticato!")
 
-		http.Redirect(w, r, "/reserved", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/reserved", http.StatusSeeOther)
 	}
 
 	defer f.Close()
@@ -176,7 +176,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 	/* mando una richiesta post (autorizzata) all'api di google per ottenere id-token e access-token */
 
 	// purtroppo se uso provo ad utilizzare 'oauthConf.Exchange()' non ottengo la risposta
-	// nel formato che voglio (devo fare: idToken, ok := token.Extra("id_token").(string))
+	// nel formato che voglio (dovrei fare: idToken, ok := token.Extra("id_token").(string))
 	// Quindi faccio a mano invece di usare la libreria
 
 	// Costruisci la richiesta POST
@@ -243,7 +243,6 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore decodifica JSON: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// il token che ricevo include sia id-token che access-token
 	logger.Debug("recuperata identità dell'utente:", "identità", identità)
 	f, _ = os.Create("identità.json")
 	defer f.Close()

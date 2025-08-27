@@ -44,7 +44,7 @@ Per risolvere le problematiche dei TRNG si utilizzano **algoritmi deterministici
 
 Il modello di tali generatori algoritmici, detti pseudocasuali o PRNG (Pseudo Random Number Generator), è **l’automa a stati finiti** illustrato nella figura. Un automa a stati finiti è considerato un PRNG solo se supera i test di casualità.
 
-![alt text](../immagini/PRNG.png)
+![alt text](img/PRNG.png)
 - blocco F computa il bit da generare dato lo stato corrente (**funzione di uscita**)
 - blocco G computa lo stato futuro dato lo stato corrente (**funzione di stato futuro**)
 - lo **stato iniziale** è fornito dal seme S0

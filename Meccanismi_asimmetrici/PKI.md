@@ -69,10 +69,10 @@ E’ indispensabile che questo evento sia tempestivamente notificato a tutti gli
 
 #### come si distribuisce agli utenti l'informazione sullo stato di revoca di un certificato?
 I metodi esistenti per la notifica della revoca vengono classificati generalmente fra:
-- **push**
+- **pull**
     - effettivamente quello più utilizzato
     - gli utenti devono controllare le revoche su un DB
-- **pull**
+- **push**
     - la CA propaga a tutti la revoca a tutti (presuppone un'infrastruttura pub/sub, difficile)
 
 Un’ altra classificazione tra gli schemi di notifica della revoca è tra
@@ -123,7 +123,7 @@ svantaggi: non garantiscono la freschezza delle informazioni!
 #### Problema della dimensione delle CRL
 Dato che di volta in volta la CRL cresce con l’aggiunta di nuovi certificati revocati, ci potrebbe essere un problema dal punto di vista della dimensione della CRL e quindi della dimensione delle strutture dati da scaricare. A tal proposito sono state elaborate delle soluzioni, tra cui:
 - **Eliminare la revoca dopo la prima CRL successiva alla scadenza del certificato**
-    - perché tanto sarebbe scaduto in ogni caso la data, dunque non serve continuare a farlo sapere
+    - perché tanto sarebbe scaduto in ogni caso, non serve continuare a farlo sapere
 
 - **Pubblicare CRL complete (Base CRL) e poi solo le differenze (Delta CRL)**
     - vengono effettuati dunque degli aggiornamenti incrementali
@@ -141,7 +141,7 @@ Dato che di volta in volta la CRL cresce con l’aggiunta di nuovi certificati r
 
 #### Ragionamenti sulle tre soluzioni (importanti per l’esame):
 - **La prima soluzione ha un problema**
-    - se un utente vuole sapere se il certificato X è stato revocato **sarà costretto a scaricare progressivamente tutte le revoche** (dimensioni download molto grandi) finché non trova una corrispondenza o finché non scopre che il certificato non è stato revocato.
+    - se un utente vuole sapere se il certificato X è stato revocato (non se è scaduto) **sarà costretto a scaricare progressivamente tutte le revoche** (dimensioni download molto grandi) finché non trova una corrispondenza o finché non scopre che il certificato non è stato revocato.
     - È dunque molto oneroso per l’utente.
     - La CA deve mantenere poi tutte le CRL -> costoso anche per la CA
 

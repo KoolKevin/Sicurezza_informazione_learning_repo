@@ -30,7 +30,7 @@ d'ora in poi con trasformazioni segrete intenderemo algoritmo noto con parametro
     - ma non si può derivare k_s da k_d (mentre il contrario è facile)
     - tipico per autenticazione
 
-![alt text](../immagini/cifrari_simmetrici_e_asimmetrici.png)
+![alt text](img/cifrari_simmetrici_e_asimmetrici.png)
 
 - lo spazio delle chiavi N deve essere molto grande
     - in questo modo attacchi di forza bruta non riescono a trovare la chiave giusta

@@ -142,9 +142,12 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
     - viene emessa ed aggiornata periodicamente
     - struttura simile ad un certificato nel senso che è firmata da una CA ed ha un periodo di validità (fino alla prossima emissione)
     - Può diventare molto grande è quindi è importante adottare delle tecniche che consentono di ridurre la dimensione/la quantità di dati da trasferire all'utente
-        - elimino certificati revocati già presenti in CRL vecchie  -> assolutamente no
-        - pubblico i diff                                           -> aiuta solo la bandwidth
-        - sotto-liste                                               -> si grazie
+        - elimino le entry relative a certificati scaduti nell CRL successive alla loro data di scadenza 
+            - sono scadute non c'è bisogno di manterle 
+                - se il certificato era stato revocato elimino la entry
+                - se non era stato revocato non la aggiungo neanche
+        - pubblico i diff -> aiuta solo la bandwidth
+        - sotto-liste -> si grazie
     - problema della freschezza, tra un aggiornamento e l'altro potrebbero essere stati revocati dei certificati -> c'è anche OCSP
 
 10. Gerarchia delle CA

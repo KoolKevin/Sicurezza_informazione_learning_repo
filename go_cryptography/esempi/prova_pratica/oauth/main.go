@@ -145,10 +145,11 @@ func handleAuthorization(w http.ResponseWriter, r *http.Request) {
 		)
 		logger.Debug("url per la richiesta di autorizzazione:", "url", url)
 
-		http.Redirect(w, r, url, http.StatusSeeOther)
+		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 	} else {
 		logger.Debug("access-token già presente!")
-		http.Redirect(w, r, "/repos", http.StatusTemporaryRedirect)
+
+		http.Redirect(w, r, "/repos", http.StatusSeeOther)
 	}
 
 	defer f.Close()
