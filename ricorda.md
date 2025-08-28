@@ -188,5 +188,8 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
         - in entrambi gli attacchi l'attaccante può rigirare messaggi ottenuti da sessioni diverse in cui svolge sia il ruolo di identificatore che di identificando
         - con un protocollo ingenguo, si lascia il tempo all'attaccante di svolgere più sessioni (in particolare, può aspettare che uno tenti di identificarsi presso di lui)
             - primo accorgimento utile è quindi limitare il periodo di validità delle sfide
-        - un ulteriore accorgimento è quello di numerare le identificazioni (seq number) tra i due interlocutori (sia per inteleaving che per reflection).
+        - un ulteriore accorgimento è rompere la simmetria dei messaggi nel protocollo e linkarli aggiungendo dentro all'hash nelle risposte
+            - entrambi i nonce della sessione
+            - e anche il destinatario della risposta
+        - un ultimo accorgimento è quello di numerare le identificazioni (seq number) tra i due interlocutori (sia per inteleaving che per reflection).
             - in questa maniera se un attaccante ripropone una sfida/risposta il seq number non combacia
