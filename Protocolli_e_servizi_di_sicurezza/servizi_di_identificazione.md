@@ -58,7 +58,7 @@ L’intruso ha inoltre due altre vulnerabilità da sfruttare, **la memoria dell�
     - l'attaccante non può invertire gli hash e in questo modo solo l'utente conosce la sua pw
     - tuttavia le pw degli utenti abbiamo già visto essere **poco casuali**
     - diventa possibile **precomputare l'hash di pw comuni** e vedere se si trova un match (attacco con dizionario) 
-    - contromisure all'attacco con dizionario (rainbow table) è aggiungere un salt alla password prima dell'hash. In questa maniera l'attaccante dovrà ricalcolare il dizionario per ogni salt che però diventerà enorme 
+    - contromisure all'attacco con dizionario (rainbow table) è aggiungere un salt alla password prima dell'hash. In questa maniera l'attaccante, **per ogni salt**, dovrà ricalcolare l'hash di tutte le entry nel dizionario 
         - per ogni salt devo provare tutte le password 
         - pwd nel dizionario = 10^6 ; num pwd == num utenti = 10^3 -> **num hash da calcolare = 10^6*10^3 = 10^9**
     - e se si usa appositamente una funzione di hash particolarmente lenta (KDF), questo rende l'attacco infattibile. (guarda salt.md)
@@ -102,10 +102,10 @@ Il principio è di **assegnare all’utente una sequenza di password da consumar
 
 In fase di registrazione A sceglie a caso un numero X_A ed impiega una funzione non invertibile F (ad esempio una funzione hash sicura) per calcolare la sequenza di valori:  XA, F(XA), F^2(XA), F^3(XA) … F^n-1(XA) F^n(XA)
 -  ove Fi indica l’i-esima applicazione di F. 
-- I primi n dati sono memorizzati da A in ordine inverso (prima F^n(XA)).
+- I primi n dati sono memorizzati da A in ordine inverso (prima F^n-1(XA)).
 - Nella memoria della macchina M viene inserito solo Fn (XA). 
 
-Alla prima connessione A invia Prova(1) = F^n-1(XA) ed il sistema calcola F(Prova(1)). Se il risultato è proprio F^n-1(XA)
+Alla prima connessione A invia Prova(1) = F^n-1(XA) ed il sistema calcola F(Prova(1)). Se il risultato è proprio F^n(XA)
 - A è identificato
 - la one-time password che M ha ricevuto è memorizzata al posto del precedente termine di paragone (= funzione(segreto))
 - A invece la depenna dalla sua lista, per poter usare il secondo dato come Prova(2).
@@ -113,6 +113,7 @@ Alla prima connessione A invia Prova(1) = F^n-1(XA) ed il sistema calcola F(Prov
 Il comportamento di A e di M si ripete identico fino a quando il primo non invia XA, cosa che impone di rinnovare l'accordo sul segreto. 
 
 L’ipotesi di non invertibilità della F rende del tutto inutile sia l’intercettazione delle prove già inviate, sia il furto del termine di paragone memorizzato da M. 
+- un'attaccante non riesce a risalire alla prova di identità successiva
 - l'attacco con replica non è più possibile dato che il verificatore cambia le prove di conoscenza ad ogni sessione di identificazione
 
 
@@ -125,7 +126,7 @@ Questo non è più vero se l’identificando ed il verificatore, all’inizio di
 
 Una chiave di cifratura sempre diversa è detta chiave di sessione (session key, one-time key). 
 
-In questo caso sia A che B hanno il vantaggio di** poter memorizzare solo la PW che hanno inizialmente concordato**. Può però venire il dubbio che la modifica, continua ed in segreto, delle due trasformazioni costituisca un carico di lavoro eccessivo richiesto ai due corrispondenti.  Non è così e lo vedremo: tale delicata incombenza può essere **presa totalmente in carico dai servizi di rete, senza richiedere alcun intervento diretto da parte degli utenti (trasparenza)**.  
+In questo caso sia A che B hanno il vantaggio di **poter memorizzare solo la PW che hanno inizialmente concordato**. Può però venire il dubbio che la modifica, continua ed in segreto, delle due trasformazioni costituisca un carico di lavoro eccessivo richiesto ai due corrispondenti.  Non è così e lo vedremo: tale delicata incombenza può essere **presa totalmente in carico dai servizi di rete, senza richiedere alcun intervento diretto da parte degli utenti (trasparenza)**.  
 - ESEMPIO – All’inizio di ogni collegamento, i protocolli di rete SSL e IPv6 aiutano i due terminali a concordare in segreto la chiave di sessione che impiegheranno per cifrare ogni loro successiva comunicazione.
 - vedi scambio DH
 
@@ -185,6 +186,7 @@ Utilizzando il protocollo ingenuo di sopra abbiamo che:
 
 
 **Attacco di reflection**
+
 ![alt text](img/reflection_attack.png)
 
 L’attacco richiede di attivare due copie del protocollo contemporaneamente. A inizia il protocollo inviando la sfida RA a C, C avvia un’altra copia del protocollo ma nell’opposta direzione inviando la sfida RA ad A pretendendo di essere B
@@ -206,6 +208,7 @@ C apre due sessione di identificazione (una in cui si identifica, e l'altra in c
 3. mancano dei legami tra i messaggi che mi consentono di **collegare una risposta ad una sfida**
 
 Il protocollo viene quindi complicato nel seguente modo:
+
 0. A vuole identificarsi presso B e identificare B
 1. B→A: RB                                          // B sfida A                     
 2. A→B: c_A = RA || H(**RA** || RB || **B** || s)   // A risponde 
@@ -232,7 +235,7 @@ Nel primo caso il verificatore cifra il nonce (con la chiave pubblica del verifi
 
 Nel secondo caso il verificatore trasmette il nonce in chiaro, si mette in attesa della sua firma e poi la verifica (di nuovo la chiave pubblica deve essere autentica)
 
-**NMB**: in questo caso l'identificazine mutua non è vulneraibile agli attacchi esposti sopra in quanto **non c'è un segreto condiviso** (se si usa un meccanismo asimmetrico). **L'identificazione mutua è molto semplificata** in quanto analoga al caso unilaterla (basta che l'identificando faccia una **POP** della chiave privata; vedi certificati X.509)
+**NMB**: valgono comunque gli attacchi presentati sopra nel caso di identificazione mutua, anche se non c'è un segreto precondiviso
 
 ### conclusione finale
 protocollo di identificazione = real time

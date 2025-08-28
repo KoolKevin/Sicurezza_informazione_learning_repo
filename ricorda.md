@@ -157,3 +157,36 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
     - bisogna trovare le catene di fiducia (catene di certificati) fino ad una root-CA e verificarle
     - cross-certificates sono certificati che certificano la chiave pubblica di un altra CA
         - certificano i nodi intermedi del percorso di fiducia
+
+
+11. Identificazione passiva
+    - ripeto sempre lo stesso dato come prova di identità
+    - sempre suscettibile ad attacco di intercettazione e replica -> assolutamente inadatto a sistemi in rete
+    - per lo stesso motivo è anche impossibile fare identificazione reciproca
+        - un MIM può aspettare che io gli invii le mie credenziali, non rispondermi, replicare le mie credenziali verso il destinatario legittimo spacciandosi per me
+
+12. Identificazione attiva
+    - l'identificando manda una prova di identità sempre diversa
+    - abbiamo visto 3 varianti:
+        - one-time pwd
+        - sfida/risposta
+        - zero-knowledge proofs
+
+13. Identificazione attiva con sfida/risposta
+    - esistono 3 varianti
+        - hash con segreto preconcordato (pwd modem)
+        - firma asimmetrica
+        - cifratura asimmetrica
+    - tutte e 3 le varianti usano come sfida un nonce in modo da evitare gli attacchi con replica
+        - **NB**: il nonce è generato da un PRNG e come al solito occorre che sia **imprevedibile**. Se il nonce fosse prevedibile l'attaccante potrebbe spacciarsi per l'identificatore B e farsi mandare da A _H(S || RB')_; con RB' = nonce previsto dall'attaccante che B vero produrrebbe nella prossima sfida. A questo punto l'intrusore può spacciarsi per A con B nella prossima sessione dato che conosce l'hash che verrebbe usato da A alla sfida con RB'.
+
+14. Identificazione mutua con sfida e risposta
+    - se si usa la variante con hash e segreto precondiviso non si può identificare prima uno e poi l'altro come ci si aspetta
+    - ho il problema che si possono tenere aperte due sessioni di identificazione
+        - **attacco di interleaving (gran maestro scacchista)**: apro due sessioni contemporanee con due entità diverse
+        - **Attacco di reflection**: apro due sessioni contemporanee con la stessa entità
+        - in entrambi gli attacchi l'attaccante può rigirare messaggi ottenuti da sessioni diverse in cui svolge sia il ruolo di identificatore che di identificando
+        - con un protocollo ingenguo, si lascia il tempo all'attaccante di svolgere più sessioni (in particolare, può aspettare che uno tenti di identificarsi presso di lui)
+            - primo accorgimento utile è quindi limitare il periodo di validità delle sfide
+        - un ulteriore accorgimento è quello di numerare le identificazioni (seq number) tra i due interlocutori (sia per inteleaving che per reflection).
+            - in questa maniera se un attaccante ripropone una sfida/risposta il seq number non combacia
