@@ -193,3 +193,117 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
             - e anche il destinatario della risposta
         - un ultimo accorgimento è quello di numerare le identificazioni (seq number) tra i due interlocutori (sia per inteleaving che per reflection).
             - in questa maniera se un attaccante ripropone una sfida/risposta il seq number non combacia
+
+15. Cifrari asimmetrici
+    - se sono a blocchi, è importante che il numero corrispondente al blocco binario, sia minore del monulo n. Questo perchè ad un testo in chiaro deve corrispondere uno e un solo testo cifrato; se se si eccede il modulo due blocchi di plaintext possono venire cifrato nello stesso modo dato che il modulo fa il giro
+    - **NB**: un Cifrario asimmetrico è almeno **mille volte più lento** di un Cifrario simmetrico ed è quindi fortemente auspicabile impiegarlo con messaggi “corti”.
+        - perchè?
+            - dobbiamo fare delle esponenziazioni modulari e generare numeri primi grandi!
+            - nel caso simmetrico devo fare solo trasposizioni e sostituzioni (con xor)
+        - Ciò non ne limita l’utilità, dato che il suo uso tipico è la comunicazione della chiave di un Cifrario simmetrico (vedi cifrario ibrido) oppure la firma di messaggio per appendice.
+            - il plaintext sta dentro ad un blocco
+    - **NB**: è ancora più importante che qui i cifrari siano probabilistici dato che non c'è neanche bisogno di fare intercettazione per attuare attacchi di chosen-plaintext / malleabilità con sostituzione di blocchi (ricorda ECB)
+        - la chiave pubblica è a disposizione di tutti e quindi tutti possono cifrare 
+        - ricordiamo che:
+            - un cifrario è deterministico se plaintext identici producono ciphertext identici
+            - è probabilistico se quanto detto sopra non è vero dato che viene impiegato un numero casuale per ottenere cifrati distinti
+    - Per eliminare questi punti deboli, il Cifrario deterministico deve essere “randomizzato”.
+        - Se il **messaggio è più lungo del modulo**, si impiega tipicamente la **modalità CBC ed un IV casuale**.
+        - Se il **messaggio è più corto del modulo**, ed è questo il caso di maggiore interesse (chiavi), il mittente, seguendo uno standard ben preciso indicatogli dal destinatario, **gli aggiunge in testa un padding contenente un numero a caso e poi cifra il tutto**.
+
+16. RSA
+    - cifratura     -> c = m^e mod n
+        - _e_ ed _n_ formano la chiave pubblica
+    - decifratura   -> m = c^d mod n = m^(e*d) mod n = m^1 mod n
+        - _d_ ed _n_ forma la chiave privata
+        - d inverso moltiplicativo di e -> e*d = 1
+    - **è importante nascondere anche p e q oltre a d!**
+        - altrimenti si riesce a calcolare prima _e_ e poi _d_
+        - Non a caso dopo la generazione della coppia di chiavi solitamente vengono distrutti 
+    - RSA è deterministico, per renderlo probabilistico si aggiunge del padding con lo standard OAEP
+    - il tempo di esponenziazione modulare scala con il cubo della dimensione in bit della chiave (1024 -> 2048 -> 8 volte il tempo)
+        - è desiderabile usare l'algoritmo più efficente possibile per questo calcolo
+            - Repeated square and multiply per cifratura
+            - per la decifratura, anche Algoritmo di Garner
+        - per l’inviolabilità del Cifrario asimmetrico le chiavi devono essere molto lunghe, ma questo rende poi molto onerosi i calcoli di cifratura e di decifrazione; **bisogna quindi non esagerare mai nel dimensionamento delle chiavi**.  
+    - RSA possiede la proprietà moltiplicativa
+        - Consideriamo un messaggio m = m1 × m2.
+        - La sua cifratura è: c = m^e mod n = ((m1^e mod n) × (m2^e mod n)) mod n
+        - La cifratura del prodotto di due messaggi è uguale al prodotto dei due testi cifrati.
+        - Analogamente, si ha che la decifrazione di un testo cifrato ottenuto moltiplicando due testi cifrati è uguale al prodotto dei due corrispondenti testi in chiaro
+    - RSA è reversibile, posso scambiare il ruolo delle chiavi per effettuare delle firme
+        - Nota: come per la chiave di sessione in un cifrario ibrido, l'hash ha un numero di bit molto minore del modulo n ed è quindi ritenuto insicuro trasformarla direttamente. Di nuovo si usa del paddding.
+
+17. Attacco con proprietà moltiplicativa
+    - si suppone che l’intruso possa richiedere al proprietario della chiave privata la decifrazione di qualsiasi messaggio di sua scelta, ad esclusione del messaggio c di suo interesse.
+    - Un intruso che ha intercettato un cifrato c di cui vuole scoprire il plaintext m, può 
+        - costruire un cifrato c' ottenuto come prodotto di c e qualcos'altro che gli pare: c' = c * r^e
+        - far decifrare questo c'
+        - annullare il termine in eccesso ed ottenere la decifratura che gli interessa 
+    - Contromisure:
+        - difficile però che l'intrusore riesca a convincere il proprietario a decifrare qualsiasi messaggio di sua scelta sopratutto se si ha identificazione
+            - **NB**: se però una stessa coppia di chiave viene usata per cifrare e firmare uno potrebbe presentare il cifrato come messaggio da firmare, e la firma lo decifrerebbe a causa della reversibilità di RSA
+        - se si usa padding (OAEP) la proprietà moltiplicativa non vale più
+
+18. Cifrario ibrido
+    - posso decidere una chiave di sessione e comunicarla al mio interlocutore cifrando la chiave di sessione con la sua chiave pubblica
+    - chiaramente la sua chiave pubblica deve essere autentica e quindi devo avere il relativo certificato 
+    - cifrare messaggi molto più piccoli della dimensione delle chiavi in RSA non è sicuro, per questo motivo, quando si cifrano chiavi simmetrica in un cifrario ibrido è importante adottare il padding (OAEP)
+
+19. Firma digitale
+    - Autentica un dato
+        - ovvero, crea dunque un attendibile e verificabile **collegamento tra il dato e la persona/identità che l’ha creato**.
+    - ha validità legale (quella con appendice)
+    - due schemi:
+        - con recupero  -> cifro con la chiave privata, suddivedendo in blocchi se necessario
+        - con appendice -> hash del documento e poi firmo solo l'hash
+    - molto più efficiente lo schema con appendice dato che devo firmare (cifrare con RSA) un solo blocco
+    - la firma con recupero poi non ha validità legale dato che posso intercettare firme di vari documenti e relativi documenti e cominciare a fare sostituzione di blocchi mantenendo la validità della firma -> posso presentare come autentico un documento che ho modificato
+        - la firma con recupero va anche bene se firmo un solo blocco -> questo è il caso di RSA
+
+20. **Firma cieca**
+    - possible grazie alla proprietà moltiplicativa di RSA
+    - Siccome la firma è una cifratura, vale come prima che **la firma del prodotto di due messaggi è uguale al prodotto delle due firme**
+    - Tale tecnica risulta particolarmente utile nella situazione in cui un utente X può **richiedere ad un’Autorità T di autenticargli un messaggio m, di cui, però, non vuole rivelare il contenuto**.
+        - vedi voto elettronico in cui una terza parte mi firma il mio voto senza che sappia quale sia
+    - un utente può quindi 
+        - oscurare un messaggio moltiplicandolo con qulcosa che sa 'r' lui cifrato con la chiave pubblica della terza parte
+        - presentare il prodotto a T per farselo firmare
+            - la firma decifrerà r 
+        - eliminare r ed ottenere il messaggio firmato senza che la terza parte abbia mai visto il contenuto
+    - **NB**: siccome la terza parte firma, e quindi si assume una responsabilità, solitamente la terza parte impiega anche un protocollo di identificazione per capire chi è che mi sta chiedendo di firmare della roba. 
+        - Questo elimina l'attacco con proprietà moltiplicativa
+    - **A che cosa serve la firma cieca?**
+        - in sostanza, ad autenticare i dati mantenendo però l'anonimato
+        - La firma dell’autorità dice:
+            - Questo messaggio è valido
+            - Proviene da una persona autorizzata (perchè T ha identificato)
+            - Non è stato modificato
+        - Perché serve oscurare il messaggio nella fase di firma?
+            - Se l’autorità vedesse il contenuto del voto quando lo firmi, saprebbe per chi voti
+                - violazione della segretezza del voto.
+            - Con la firma cieca l’autorità non sa cosa ha firmato
+            - Tu rimuovi l’offuscamento e ottieni il voto firmato, pronto da inserire nell’urna
+            - Chiunque controlla la firma sa che è un voto valido, **ma non sa chi è il proprietario del voto**
+        - Conclusione: se firmassi io, tutti saprebbero per chi ho votato. La firma cieca mi permette di mantenere il mio anonimato
+
+21. **Attacchi alla firma con RSA**
+    - **attacco alla firma basato su proprietà moltiplicativa**
+        - Supponiamo che l’intruso **possa richiedere al firmatario X di firmare qualsiasi messaggio di sua scelta, ad esclusione del messaggio m di suo interesse** (questo scenario è detto chosen message attack).
+        - Per ottenere la firma di m è sufficiente che
+            - l’intruso generi un numero a caso r
+            - costruisca m1 = m × r
+            - calcoli m2 = r^-1
+            - chieda ad X di firmare entrambi i messaggi
+            - e moltiplichi infine le firme di m1 e di m2 che gli vengono restituite.
+                - Ricordiamo: **La firma del prodotto di due messaggi è uguale al prodotto delle due firme**
+                - Abbiamo quindi che S(m1) * S(m2) = S(m1 * m2) = S(m * r * r^-1) = **S(m)**
+                - **X ha firmato inconsapevolmente un messaggio arbitrario dell'attacante**
+
+    - **attacco alla riservatezza facendo firmare un cifrato**
+        - L’intruso sfrutta la proprietà moltiplicativa
+            - oscura c in modo che il firmatore non si accorga che firmando decifra qualcosa,
+            - se lo fa firmare da X (il che corrisponde alla decifrazione con la chiave privata),
+            - elimina il numero a caso ed ottiene il testo in chiaro che non doveva poter conoscere.
+        - Vale dunque la seguente regola: `chi impiega RSA per decifrare e per firmare deve utilizzare due differenti coppie di chiavi`
+            - in questa maniera, firmare un cifrato non lo decifra dato che le coppie di chiavi sono diverse

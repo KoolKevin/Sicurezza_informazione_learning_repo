@@ -178,6 +178,7 @@ Questo attacco non preoccupa però più di tanto, dato che il messaggio y è un 
 
 
 **attacco alla firma basato su proprietà moltiplicativa**
+
 Una più pericolosa vulnerabilità discende dalla proprietà moltiplicativa.
 
 Supponiamo che l’intruso **possa richiedere al firmatario X di firmare qualsiasi messaggio di sua scelta, ad esclusione del messaggio m di suo interesse** (questo scenario è detto chosen message attack).
