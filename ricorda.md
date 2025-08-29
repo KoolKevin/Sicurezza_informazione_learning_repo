@@ -146,8 +146,9 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
             - **NB**: la CA autentica la tripla, ma nello scambio non c'è una PoP che mi identifica il mittente; è dunque possible che un attaccante presenti un certificato che non è il suo
                 - poco male, non avendo il dato segreto X non può concordare la stessa chiave di sessione 
                 - non è comunque il massimo dato che (se non si controlla di avere concordato la stessa chiave come in TLS) si potrebbe mandare del testo cifrato ad un attaccante
-        - **Anonymous DH**
+        - **Ephemeral DH**
             - analogo a scambio anonimo, solamente che gli interlocutori inviano il loro dato pubblico Y firmato, il ricevente può autenticare verificando la firma
+                - come sempre, bisogna che gli intelocutori si scambino i loro certificati in maniera da fornire all'altro la possibilità di verificare la firma
             - qua X e Y cambiano sempre e quindi la chiave di sessione concordata è sempre diversa (per compatibilità si usano comunque i nonce)
             - anche qua non c'è identificazione, dato che un attaccante potrebbe replicare un Y firmato intercettato in comunicazioni precedenti
                 - di nuovo poco male dato che non avendo X non riesce a concordare la stessa chiave
@@ -220,7 +221,7 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
             - in questa maniera se un attaccante ripropone una sfida/risposta il seq number non combacia
 
 15. Cifrari asimmetrici
-    - se sono a blocchi, è importante che il numero corrispondente al blocco binario, sia minore del monulo n. Questo perchè ad un testo in chiaro deve corrispondere uno e un solo testo cifrato; se se si eccede il modulo due blocchi di plaintext possono venire cifrato nello stesso modo dato che il modulo fa il giro
+    - è importante che il numero corrispondente al blocco binario, sia minore del monulo n. Questo perchè ad un testo in chiaro deve corrispondere uno e un solo testo cifrato; se se si eccede il modulo due blocchi di plaintext possono venire cifrato nello stesso modo dato che il modulo fa il giro
     - **NB**: un Cifrario asimmetrico è almeno **mille volte più lento** di un Cifrario simmetrico ed è quindi fortemente auspicabile impiegarlo con messaggi “corti”.
         - perchè?
             - dobbiamo fare delle esponenziazioni modulari e generare numeri primi grandi!
@@ -235,6 +236,12 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
     - Per eliminare questi punti deboli, il Cifrario deterministico deve essere “randomizzato”.
         - Se il **messaggio è più lungo del modulo**, si impiega tipicamente la **modalità CBC ed un IV casuale**.
         - Se il **messaggio è più corto del modulo**, ed è questo il caso di maggiore interesse (chiavi), il mittente, seguendo uno standard ben preciso indicatogli dal destinatario, **gli aggiunge in testa un padding contenente un numero a caso e poi cifra il tutto**.
+    - la dimensione del messaggio influisce anche in come bisogna impiegare il cifrario
+        - se m > n
+            - m deve essere frammentato in blocchi inferiori a 1024 bit, altrimenti a più testi in chiaro potrebbe corrispondere lo stesso cifrato
+        - se m < n
+            - È assolutamente necessaria l’aggiunta di un padding (tipicamente OAEP) per estendere il numero di bit iniziale fino alla lunghezza del modulo. 
+            - Se non usassimo il padding, il messaggio essendo più corto di 128 bit sarebbe vulnerabile ad un attacco con forza bruta
 
 16. RSA
     - cifratura     -> c = m^e mod n

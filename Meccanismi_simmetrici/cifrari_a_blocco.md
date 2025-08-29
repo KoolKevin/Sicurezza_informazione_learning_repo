@@ -184,8 +184,10 @@ nello schema OFB il vettore iniziale deve essere unico anche per un altro motivo
 ![alt text](img/counter.png)
 
 Opera esattamente come una modalità ECB: **il testo in chiaro viene suddiviso in blocchi, ciascuno dei quali viene lavorato indipendentemente dagli altri (parallelo)**. Stavolta, però, i bit in chiaro di ogni singolo blocco vengono messi in xor con i bit in uscita di un contatore della stessa dimensione del blocco di testo in chiaro su cui operare.
+- contatore di dimensione pari a quella del blocco; 
+- il valore del contatore differente per ogni blocco
 
-Anche la modalità CTR impiega la sola trasformazione di cifratura per generare un flusso di chiave di L (= lunghezza del blocco) bit casuali da porre in xor con un pari numero di bit del testo in chiaro (lato sorgente) e cifrato (lato destinazione).I bit del flusso di chiave sono ottenuti cifrando lo stato di un contatore a L bit, incrementato di un’unità prima di procedere all’elaborazione di un nuovo blocco.
+Anche la modalità CTR impiega la sola trasformazione di cifratura per generare un flusso di chiave di L (= lunghezza del blocco) bit casuali da porre in xor con un pari numero di bit del testo in chiaro (lato sorgente) e cifrato (lato destinazione). I bit del flusso di chiave sono ottenuti cifrando lo stato di un contatore a L bit, incrementato di un’unità prima di procedere all’elaborazione di un nuovo blocco.
 - Il comportamento è dunque quello di un **Cifrario a flusso sincrono** il cui flusso di dati è costituito dai bit di un blocco.
     - con le relative considerazioni sulla perdita di sincronizzazione
 
