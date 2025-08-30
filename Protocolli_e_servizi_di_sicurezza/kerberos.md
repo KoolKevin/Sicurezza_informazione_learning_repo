@@ -9,7 +9,7 @@ Il servizio di autenticazione si **ispira al modello del KDC**
 
 È adatto però solo a domini limitati con utenti conosciuti a priori, come in azienda.
 
-#### ragionamento iniziale | dove posiziono il servizio di autenticazione?**
+#### ragionamento iniziale | dove posiziono il servizio di autenticazione?
 sulle workstation?
 - **ogni workstation dovrebbe tenere traccia delle prova di identità di tutti gli utenti**
 - ci dovrebbe essere una relazione di fiducia tra le workstation e i server 

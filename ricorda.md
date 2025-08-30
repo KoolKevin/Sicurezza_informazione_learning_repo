@@ -339,3 +339,165 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
             - elimina il numero a caso ed ottiene il testo in chiaro che non doveva poter conoscere.
         - Vale dunque la seguente regola: `chi impiega RSA per decifrare e per firmare deve utilizzare due differenti coppie di chiavi`
             - in questa maniera, firmare un cifrato non lo decifra dato che le coppie di chiavi sono diverse
+
+22. PGP
+    - interessante come servizio in cui il modello di fiducia (autenticità della chiave pubblica) è decentralizzato
+    - permette a interlocutori che non si conoscono di scambiarsi messaggi cifrati e autentici
+        - per autenticità si fa una firma con appendice
+        - per riservatezza si fa una cifratura simmetrica e il mittente scambia la chiave di sessione mediante cifrario ibrido
+    - Il PGP si prende totalmente in carico la gestione delle chiavi dell’utente e dei suoi corrispondenti
+        - Nel **portachiavi pubblico** sono alloggiate le sue **chiavi pubbliche** e quelle **dei suoi corrispondenti**. 
+        - Nel **portachiavi privato** sono alloggiate, **cifrate**(con passphrase) , le sue **chiavi private**
+    - I messaggi che si scambiano i due mittenti PGP contengono quindi degli id di coppia di chiave
+        - quando un mittente cifra la chiave di sessione, cifra con la chiave pubblica del destinatario, specificando l'id della coppia di chiave, il destinatario saprà quale chiave privata nel suo portachiavi dovrà usare per decifrare
+        - quando un mittente firma, firma con la sua chiave privata, specificando l'id della coppia di chiave, il destinatario saprò quale chiave pubblica nel suo portachiavi dovrà usare per verificare la firma
+    - PGP usa modello di fiducia decentralizzato, senza certificati, alternativo all’ Autorità di certificazione.
+        - non c'è nessun certificatore
+        - Ma allora, chi mi da la garanzia che le chiavi pubbliche siano effettivamente del destinatario dichiarato?
+        - C'è una componente soggettiva (quanto mi fido io di una determinata chiave pubblica) ed una componente esterna data dalle firme di altri utenti 
+            - se io mi fido della chiave di A, e A si fida della chiave di B (e A mi firma la chiave di B come dimostrazione della sua fiducia), allora io mi fido anche della chiave di B.
+            - la fiducia in questo sistema è sempre data da una componente soggettiva. Per questo motivo non ha alcuna validità legale (nessuno si assume responsabilità)
+            - Il livello di fiducia attribuito per una determinata chiave dipende dalla fiducia nei confronti dei firmatari
+        - A tal proposito una chiave pubblica può essere ricevuta:
+            - Personalmente/direttamente -> massima fiducia
+            - Tramite intermediario/indirettamente (via mail, pubblicate su un sito, pubblicate su un db, ...) -> meno affidabile (magari MIM)
+        - Le strutture dati salvate all'interno del portachiavi pubblico sono quindi simili a certificati, non chiavi pubbliche crude.
+            - abbiamo una identità
+            - associata ad una chiave pubblica
+            - seguita da, non una singola firma di una CA fidata, ma da molteplici firme di utenti di cui mi posso fidare più o meno (magari anche firma del proprietario, autocertificazione)
+        - PGP calcola automaticamente sulla base di Owner Trust e le varie Signature Trust il livello di fiducia della chiave (fidata, non fidata, incerta, ...).
+            - A intervalli regolari questo campo viene automaticamente ricalcolato da PGP: infatti, un peer potrebbe passare da fidato a non fidato (perché magari è stata compromessa la sua chiave privata).
+        - L’utente può, se vuole, firmare la chiave ricevuta ed inviare poi la sua certificazione al proprietario della chiave e/o ad un database di chiavi PGP. Da questa spontanea collaborazione tra gli utenti discende una rete di fiducia (web of trust), che consente di trasferire da una chiave all’altra la confidenza sulla sua autenticità
+        - In questo modello si rinuncia ad alcuni vantaggi della CA
+            - tempo di revoca molto più lungo
+                - l'informazione di revoca si deve propagare nella rete di fiducia
+            - tempestività molto bassa
+
+23. TSS
+    - A noi interessano le marche temporali impiegate insieme alle firme digitali. 
+    - Le firme digitali spesso dipendono da una marca temporale:
+        - per validità della firma (scadenza del certificato)
+        - data di creazione o quantaltro (pensa a momenti di invio di un messaggio per una graduatoria)
+    - Quando firmi digitalmente un documento, la firma garantisce due cose:
+        - Integrità – il contenuto non è stato modificato dopo la firma.
+        - Autenticità – la firma è stata fatta proprio da quel titolare del certificato.
+    - Ma non garantisce di per sé la data e l’ora reali della firma
+        - Infatti, la data scritta dentro il documento o anche quella che il software di firma mostra può essere presa dall’orologio del computer del firmatario
+        - ma quell’orologio può essere impostato a piacere, non da alcuna garanzia sull'istante reale di firma
+    - Se hai solo la firma digitale senza marca temporale sicura, in un contenzioso qualcuno potrebbe dire:
+        - "Io l’ho firmato prima che scadesse il mio certificato!", oppure
+        - "L’ho firmato quando il contratto era ancora valido!"
+        - e sarebbe difficile dimostrare/rifiutare queste affermazioni
+    - Con la marca temporale sicura, invece, un terzo fidato certifica (con a sua volta una firma):
+        - "Questo documento era così alle 15:23 del 12 agosto 2025" e questa data non è falsificabile.
+    - In pratica, la marca temporale serve per:
+        - Dimostrare quando un documento è stato firmato o esisteva in quella forma
+        - Rendere valida nel tempo una firma digitale anche dopo la scadenza o revoca del certificato
+            - si sa se la firma è stata apposta prima o dopo la scadenza del certificato
+        - Evitare dispute su date falsificate
+    - chi riceve un dato firmato con una marca temporale sicura è in grado di
+        - conoscere con esattezza la data di creazione del dato (di nuovo vedi graduatorie)
+        - accertare che a tale data la chiave di firma era valida.
+    - La soluzione usuale è prevedere che TSS sia un Ente fidato (ci fidiamo che lui firmi sempre con le misurazioni del tempo prese da TAI/UTC) e che la chiave di verifica della sua firma sia certificata.
+
+
+24. Kerberos
+    - Kerberos è un servizio di Autenticazione per un ambiente client/server
+        - Consente quindi a un utente tramite la propria workstation (comunità di utenti tipicamente piccola, ambito di tipo aziendale) di autenticarsi mutuamente su un server (tra tanti disponibili) e accedere al servizio fornito.
+    - Il servizio di autenticazione si ispira al modello del KDC
+        - impiega solo meccanismi a chiavi simmetriche (cifrari simmetrici)
+        - e richiede la presenza in linea di una terza parte fidata (auth server).
+        - come il KDC è adatto solo a domini limitati con utenti conosciuti a priori, come in azienda dato che necessita di una serie di precondivisione di segreti
+    
+    - ragionamento iniziale | dove posiziono il servizio di autenticazione?
+        - sulle workstation?
+            - ogni workstation dovrebbe tenere traccia delle prova di identità di tutti gli utenti
+            - ci dovrebbe essere una relazione di fiducia tra le workstation e i server
+            - scala con n^2
+            - e devono essere aggiunte/tolte se vengono aggiunte/tolte delle workstation/server
+            - non scalabile
+        - sui server
+            - uhm, stessi problemi in realtà
+        - Idea: non ha senso distribuire su tutte le macchine le funzionalità di autenticare gli utenti, utilizziamo un unico server di autenticazione centralizzato.
+            - relazione di fiducia tra i server ed il server di autenticazione (singola).
+            - I server accettano tutti i messaggi autenticati dal server di autenticazione
+            - permette Single Sign On
+                - credenziali singole per accedere a tutti i servizi
+
+    - Il servizio di autenticazione è implementato tramite due server particolari:
+        - AS (Authentication Server):
+            - memorizza la password (segreti precondivisi) ed i diritti (autorizzazioni ai vari servizi) di tutti gli utenti
+            - lancia una sfida d’identificazione a chi inizia una sessione di lavoro presso una qualsiasi delle workstation e gli restituisce un documento cifrato (ticket_tgs) che dovrà presentare a TGS al fine di ottenere specifiche autorizzazioni.
+                - la sfida di identificazione contiene il ticket tgs cifrato con la password dell'identificando (identifichiamo con cifrari simmetrici come in KDC)
+        - TGS (Ticket-Granting Server):
+            - condivide una chiave segreta con AS ed una con ogni altro server V
+            - decodifica e verifica il documento di AS che l'utente gli invia
+            - esamina la correttezza della risposta alla sfida lanciata da AS e, se tutto è “a posto”, restituisce all’utente un diritto d’accesso (ticket) al server V di suo interesse valido per tutta la sessione di lavoro.
+                - se l’utente, all’interno di una stessa sessione, vuole accedere più volte allo stesso servizio, non dovrà ripetere l’autenticazione, ma semplicemente continuare ad utilizzare il ticket che gli ha fornito TGS (se non è scaduto) per accedere a V.
+                - Analogamente se vorrà accedere a un altro servizio dovrà richiedere un nuovo ticket a TGS, senza interpellare AS (se l'autenticatore fornitogli da AS non è scaduto);
+            - **NB**: AS mi identifica sfidandomi a decifrare con la chiave segreta di chi dico di essere il ticket_tgs che mi manda. 
+            - Se io però, dopo aver decifrato (ed essendomi quindi identificato) mando a tgs il ticket_tgs in chiaro, questo è suscettibile a replica e quindi essermi identificato non è servito a nulla
+            - bisogna dimostrare di essere il legittimo proprietario di un ticket eliminando così gli attacchi con replica
+                - solo chi si è identificato presso AS superando una sfida è in grado di produrre un autenticatore corretto
+            - il Client produce un autenticatore cifrando un messaggio con una chiave di sessione fornitagli da AS quando si è identificato
+                - TGS ottiene la stessa chiave di sessione con cui può verificare l'autenticatore siccome è contenuta dentro al ticket
+                - l'autenticatore contiene un timestamp con cui si può controllare se è fresh ed evitare quindi la sua replica
+                - autenticatoreC serve per far sapere a TGS che **chi ha inviato il ticket è veramente C**
+                    - **l'autenticatore dimostra che l'utente è riuscito a superare la sfida di AS**
+                    - è un dato che protrae l'identificazione nel tempo
+        - **NB**: autenticatori e timestamp vengono usati anche tra C e V una volta che TGS ha fornito a C ticket_v.
+        - il protocollo si completa con l'identificazione di V presso C
+            - questa avviene con l'estrazione della chiave di sessione da ticket_V che usa per rispondere ad una sfida di C
+            - solo il v vero ha la chiave segreta con cui può fare questa operazione
+    
+    - **Considerazioni**
+        - Completato il protocollo il client C inizia ad avvalersi dei servizi del server V.
+            - Se successivamente l’utente ha ancora bisogno di V il protocollo ricomincia dal passo 5 (ripresentando ticketV)
+                - basta rigenerare un nuovo autenticatore (T5 fresh) e che il ticketV sia ancora valido ([t4, t4+d])
+            - Se durante la sessione l’utente ha bisogno di accedere anche ad un altro server, il protocollo deve essere riavviato dal passo 3 (ripresentando ticketTGS)
+                - C è già stato identificato da AS
+                - bisogna rigenerare un autenticatore (T3 fresh) e chiedere un ticket_v per il nuovo V
+        
+        - identificazione mutua serve per
+            - evitare di scambiare informazioni con un attaccante
+            - evitare intercettazione e replica dei ticket
+                - un intruso che finge di essere un server V può intercettare il ticket e provare riutilizzarlo 
+                - nota che mentre ticket_tgs ha un autenticatore, ticket_v non ce l'ha e quindi la replica funzionerebbe
+        
+        - **per quale motivo ci sono i timestamp**
+            - prevengono gli attacchi con replica
+            - se un autenticatore non è 'fresh' significa che è stato replicato e quindi non è da considerare valido
+            - **NB**: timestamp != da periodi di validità: in kerberos i periodi di validità possono essere anche lunghi perchè non sono quest'ultimi a prevenire gli attacchi con replica come nel protocollo precedente 
+
+        - **perchè c'è l'autenticatore (utile da generalizzare)?**
+            - anche questo previene gli attacchi con replica
+            - permette di dimostrare di essere il legittimo proprietario di un ticket
+            - solo chi si è identificato superando una sfida è in grado di produrre un autenticatore corretto
+
+        - **cos'è un ticket?**
+            - i ticket sono **permessi di accesso**
+                - al TGS
+                - ai vari V
+            - permettono ad un utente di **non doversi riautenticare un sacco di volte**
+                - basta ripresentare un ticket (se ancora valido) per poter riusufuire dei servizi
+
+        - **Cos’è un authentication server?**
+            - È un server che verifica l’identità di un utente (lo identifica) o di un servizio (OAuth) quando tenta di accedere a una risorsa come:
+                - rete aziendale
+                - applicazione web
+                - database
+                - VPN
+                - servizio cloud
+            - In pratica, il client dice: “Sono Alice” e il server risponde: “Dimostralo”.
+            - fondamentalmente il “buttafuori digitale” di un sistema informatico:
+                - controlla chi può entrare e che permessi ha una volta dentro.
+            - A cosa serve?
+                - **Centralizzazione** 
+                    - un unico punto per gestire credenziali e permessi.
+                    - non devo replicare per ogni servizio in cui mi autentico
+                - **Single Sign-On (SSO)**
+                    - un login per più servizi, riducendo password multiple e login multipli.
+        
+        - L'autenticazione di Kerbers è fortemente centralizzata dato che c'è solo un AS.
+            - Questo è contrapposto all'autenticazione federata in cui gli AS (IdP) sono molteplici
+            - (questa sembra essere l'unica differenza)
