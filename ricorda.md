@@ -637,6 +637,6 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
     - si utilizza un finestra scorrevole di dimensione fissa e numeri di sequenza
         - la sorgente aggiunge un numero di sequenza ai pacchetti che manda per mettere in grado la destinazione di **scartare ogni pacchetto replicato da un intruso**.
         - se arriva qualcosa a sinistra delle finestra si assume che sia qualcosa che sia gia arrivato e quindi si scarta il pacchetto
-        - se ricade dentro la finestra si marchia quel numero di sequenza come ricevuto
+        - se ricade dentro la finestra si marchia quel numero di sequenza come ricevuto (se il pacchetto è integro ed autentico)
             - successivi arrivi dello stesso seq num vengono scartati
         - se arriva qualcosa a destra della finestra si sposta la finestra e si marchia quel numero di sequenza come ricevuto   
