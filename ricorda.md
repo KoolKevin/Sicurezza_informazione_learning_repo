@@ -501,3 +501,135 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
         - L'autenticazione di Kerbers è fortemente centralizzata dato che c'è solo un AS.
             - Questo è contrapposto all'autenticazione federata in cui gli AS (IdP) sono molteplici
             - (questa sembra essere l'unica differenza)
+
+25. TLS/SSL
+    - servizio semitrasparente che garantisce alle applicazioni identificazione (anche mutua) degli interlocutori e autenticità, integrità e riservatezza dei dati
+        - semitrasparente dato che le applicazioni devono comunque usare socket sicure e non normali, delegano però tutta la gestione della sicurezza al livello TLS
+    - Insieme di protocolli, a noi ne interessano due:
+        - Handshake
+            - si occupa della **negoziazione** dei meccanismi (detti anche parametri) di sicurezza (algoritmi, come scambiare la master key, ...), dell’**identificazione** (anche reciproca) tra client e server e dello **scambio della chiave** simmetrica di sessione
+            - la chiave di sessione scambiata è una master key da cui vengono derivate altri 6 segreti
+            - Per ogni direzione è, infatti, richiesto:
+                - un primo dato segreto per autenticare/verificare l’impronta di ogni blocco di dati scambiato (HMAC),
+                - un secondo dato segreto per inizializzare il Cifrario simmetrico che cifra/decifra i blocchi
+                    - (un vettore di inizializzazione se si usa la modalità CBC, un seme se si usa OFB o CFB),
+                    - notare che deve essere presente da entrambi i lati (se cifro usando un IV/seed, devo decifrare usando lo stesso IV/seed)
+                    - sono due perchè ogni lato cifra in maniera diversa
+                - un terzo dato segreto per definire la chiave di sessione ks del Cifrario a blocchi. 
+        - Record
+            - Terminato il protocollo Handshake inizia il protocollo di Record.
+            - calcola/verifica le etichette di autenticazione (HMAC) e cifra/decifra i dati.
+                - la cifratura è simmetrica con chiave di sessione scambiata durante la negoziazione.
+                - per autenticazione e integrità si applica HMAC, con l'uso di un segreto condiviso durante la negoziazione.
+                    - si usa hmac dato che è più efficente rispetto alla firma, quest'ultimo è però ripudiabile
+            - NB: TLS prima autentica e poi cifra
+                - questo è più oneroso rispetto al contrario (ipsec) dato che prima di poter decidere se scartare o meno un pacchetto devo decifrare 
+            - Ogni pacchetto, secondo le decisioni prese da Handshake, può essere o non essere autenticato e cifrato.
+
+26. Handshake
+    - Possiamo distinguere quattro fasi:
+        - Accordamento algoritmi e meccanismi di scambio delle chiavi in base a quelli supportati da entrambi.
+        - Identificazione server presso il client (obbligatoria)
+            - server fornisce qua il suo certificato al client
+            - invia parametri per lo scambio delle chiavi (vedi tripla g, p, Y in DH) se necessario (se negoziato cifrario ibrido con RSA non serve)
+            - firma per la POP assente, ma identificazione è implicita in quanto senza chiave privata non si riesce a concordare lo stesso segreto (DH) oppure a decifrare li messaggio con la chiave di sessione dentro
+        - Identificazione client presso il server (facoltativa)
+            - specchiata rispetto al server
+            - alla fine di questa fase il master secret è stato scambiato
+        - Controllo scambio master key concluso correttamente.
+            - ci si assicura di aver concordato lo stesso segreto (scambiando un hash)
+            - se qualcuno ha presentato un certificato che non è il suo, in questa fase ci si accorge del tentativo di impersonificazione dato che la chiave non combacia 
+            - se la verifica ha successo le chiavi si considerano installate e si procede con lo scambio di pacchetti cifrati ed autenticati (Protocollo Record)
+
+    - **quand'è che il client si accorge che è presente la PoP del certificato del server (il server potrebbe avere mandato il certificato di un altro)?**
+        - i casi sono 3.
+            - ho negoziato cifrario ibrido
+                - me ne accorgo in fase 4, vedendo se il server riesce a decifrare il segreto cifrato con la chiave pubblica presente nel certificato
+            - ho negoziato ephemeral DH
+                - me ne accorgo in fase 2, quando il server mi manda la tripla pubblica firmata e la verifica della firma non va a buon fine
+                - come al solito, server potrebbe aver replicato una tripla firmata che ha intercettato, allora me ne accorgo in fase 4
+            - ho negoziato fixed DH
+                - qua non c'è una prova di possesso esplicita
+                - me ne accorgo in fase 4 quando verifico di aver scambiato lo stesso segreto
+                - se il server non è chi dice di essere **la fase 4 non si chiude** (per questo è importante questa conferma finale)
+    
+27. Ipsec
+    - Garantisce sempre confidenzialità e autenticazione alle applicazioni in maniera (stavolta totalmente) trasparente
+        - stavolta però siamo a livello IP, autentichiamo e cifriamo la comunicazione non tra un client e un server (processi) ma tra macchine fisiche
+    - Ipsec è composto da
+        - tre protocolli (AH, ESP e IKE) per svolgere altrettanti servizi sicuri
+            - IKE non ci interessa (analogo ad handshake -> fa anche identificazione mutua)
+        - tre strutture dati (SA, SAD, SPD) per configurarli come desiderato dagli utenti. 
+        - due modalità di incapsulamento (trasporto e tunnel)
+    - Con IPsec (grazie alle SA) abbiamo una **granularità maggiore dei servizi di sicurezza che possiamo impiegare** rispetto a SSL
+        - possiamo ottenere solo riservatezza (ESP)
+        - o solo autenticazione (AH)
+        - o entrambi (ESP con autenticazione)
+        - SSL mi da sempre tutto
+
+28. Protolli IPSEC
+    - AH
+        - Autentica il payload di un pacchetto e indirizzi ip
+        - aggiungendo un header contenente un HMAC 
+    - ESP
+        - Cifra il payload di un pacchetto con un cifrario simmetrico e chiave di sessione scambiata con IKE
+    - ESP con autenticazione
+        - cifra e autentica il payload di un pacchetto
+        - ipsec prima cifra e poi fa hmac -> più corretto in fase di ricezione
+
+29. Modalità di Incapsulamento
+    - Durante la definizione della SA è possibile scegliere tra due differenti modalità di incapuslamento dei pacchetti: il transport mode ed il tunnel mode. Queste rappresentano le modalità con cui il pacchetto IP originario viene incapsulato nel pacchetto IPsec che si va a costruire.
+        - abbiamo quindi un pacchetto ip interno (con payload e header) ed un pacchetto ipsec esterno il cui payload è il pacchetto ip interno
+        - Con entrambe le modalità, il servizio può poi essere o AH o ESP
+    
+    - **Transport mode**
+        - viene protetto (cifrato e/o autenticato) **solo il payload del pacchetto IP interno**
+            - AH autentica anche indirizzi ip
+
+    - **Tunnel mode**
+        - **l’intero pacchetto IP interno viene cifrato e/o autenticato** e il pacchetto esterno ipsec viene incapsulato in un nuovo pacchetto ip con cui viene fatto il tunnelling (instradamento)
+            - protezione totale del pacchetto anche degli header
+            - AH adesso autentica indirizzi ip del pacchetto ipsec (non so bene a cosa serva)
+        - gli indirizzi del pacchetto ip esterno sono tipicamente quelli di due gateway (ma vale anche la configurazione H2G se si vuole solo mandare roba) peer della comunicazione ipsec che hanno stabilito una SA e quindi sanno verificare l'autenticità e decifrare i pacchetti che arrivano
+        - **Con questo metodo è possibile utilizzare Internet come supporto di una rete virtuale privata (VPN)**.
+            - se i pacchetti hanno l’intestazione ESP nessuno può vederne indirizzi e contenuto;
+            - è comunque in ogni caso impossibile modificarli o falsificarli senza che il ricevente se ne accorga (il tutto è autenticato).
+
+    - **molto importante**: A seconda del protocollo IPSEC, e che modaliltà di incapsulamento uso, ottengo proprietà di sicurezza più o meno estesa
+        - autentico/cifro solo payload e non header oppure tutto
+        - bisogna scegliere la combinazione adeguata ai proprio scopi
+
+30. Strutture dati ipsec
+    - **SPD (Security Policy Database)**
+        - entità che esamina tutto il traffico IP, sia in ingresso che in uscita, per decidere quali pacchetti debbano usufruire dei servizi IPSec.
+            - una sorta di dispatcher con cui è possibile configurare cosa viene gestito da ipsec (quali porzioni del traffico), e come (politica di sicurezza per un determinato pacchetto) 
+        - in pratica una mappa con **chiave=selettore del traffico**, e **valore=SA** 
+        - Esempi:
+            - tutto il traffico verso 192.169… deve essere protetto con ESP in modalità trasporto usando DES-CBC;
+            - il traffico FTP verso 192… deve essere protetto con ESP in modalità tunnel usando 3DES-CBC;
+            - ecc….
+    - **SA (Security Association)** 
+        - accordo stipulato (con IKE) tra sorgente e destinazione che specifica
+            - quali protocolli (AH o ESP)
+            - quali algoritmi
+            - e quali chiavi
+            - dovranno utilizzare per proteggere ogni tipo (vedi selettori SPD) di traffico che intendono scambiarsi
+        - una SA vale per una sola direzione nel flusso di dati, per proteggere entrambi i sensi bisogna stabilire due SA (una per lato)
+    - **SAD (Security Association Database)**
+        - Database  in cui sorgente e destinazione mantengono tutte le SA che hanno negoziato 
+        - Tutte le SA attive su una connessione sono contenute nel SAD, in questa maniera non devo rinegoziare chiavi, segreti o quant'altro
+
+    - **Invio e ricezione del traffico in IPSEC**
+        - Invio di un pacchetto ip:
+            - in base ai selettori in SPD si sceglie la politica di sicurezza da applicare al pacchetto, che specifica per il pacchetto IP
+                - che modalità di incapuslamento adottare (trasporto o tunnel)
+                - e che protocollo di sicurezza adottare (AH o ESP).
+            - In base alla politica scelta, si controlla in SAD se esiste già una SA utilizzata in passato (istanziata con IKE) da poter riutilizzare o se si deve crearla.
+            - A questo punto si applicano gli algoritmi di trasformazione per ottenere il pacchetto IPSec, e si invia quest'ultimo
+
+        - Ricezione di un pacchetto ipsec:
+            - il pacchetto ip interno è cifrato/autenticato.
+            - si va a trovare la SA nel SAD per capire quali sono gli algoritmi da applicare per poter decifrare/ verificare 
+            - alla fine dell’applicazione degli algoritmi si va a vedere in SPD la politica di validità per capire se quello è un pacchetto valido.
+            - Se lo è, si è riottenuto il pacchetto IP originario.
+

@@ -20,7 +20,7 @@ Garantisce sempre confidenzialità e autenticazione
 
 IPSec è costituito di tre protocolli:
 - **Authentication Header (AH)**
-    - per autenticazione, integrità e **origine** dei pacchetti;
+    - per autenticazione, integrità e **origine** (autenticazione degli header che, in particolare, previene ip spoofing) dei pacchetti;
 - **Encapsulating Security Payload (ESP)**
     - per la riservatezza delle informazioni dei pacchetti 
     - sia per riservatezza che autenticazione se configurato appositamente
