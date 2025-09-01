@@ -640,3 +640,185 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
         - se ricade dentro la finestra si marchia quel numero di sequenza come ricevuto (se il pacchetto è integro ed autentico)
             - successivi arrivi dello stesso seq num vengono scartati
         - se arriva qualcosa a destra della finestra si sposta la finestra e si marchia quel numero di sequenza come ricevuto   
+
+32. Autenticazione federata
+    - Il numero di servizi è enorme, se l'autenticazione fosse centralizzata (ogni servizio autentica i proprio utenti):
+        - numero di identità pari al numero di servizi :(
+        - ogni servizio dovrebbe preoccuparsi di salvaguardare le credenziali (poco casuali) dei propri utenti :(
+    - Per questi motivi si preferisce autenticazione federata: a group of trusted IdP share authentication responsibilities, allowing users to **access multiple services with a single identity**
+        - l'applicazione non deve per forza registrare lei gli utenti e gestirne le credenziali in maniera sicura, ci pensa l'IdP
+        - Individuals can use the same identity across multiple services
+            - Users are not required to create different accounts
+            - Users are not required to login multiple times (SSO)
+    - drawbacks di autenticazione federata
+        - Relies on trusted relationships between IdP and Services (RP) to authenticate and authorize users (vabè)
+        - il mio IdP (es. google) vede tutti i servizi a cui accedo privacy lesa
+        - Users and organizations may become dependent on a single IdP (e.g., Google, Microsoft) without an easy way to migrate (identity vendor lockin) 
+
+33. OAuth
+    - A cosa serve?
+        - a fornire autorizzazioni a servizi di terze parti per accedere (leggere/scrivere) a dati legati al tuo account presso un altro servizio
+        - in passato se un servizio voleva accedere ai tuoi dati presso un altro servizio, dovevi fornirgli le tue credenziali
+            - seconda coppia di credenziali che il servizio deve tenere sicura
+            - autorizzazioni non granulari
+        - con oauth deleghi un'applicazione a fare delle azioni per conto tuo **without giving them your credentials**
+            - nel fornire le autorizzazioni l'utente si autentica, ma il RP non riceve mai le tue credenziali
+            - inoltre, le autorizzazioni fornite possono venire controllate in maniera **granulare**
+    - Entità in gioco
+        - utente (resource owner)
+        - authorization server (in generale distinto dal Resource server)
+        - Relying party (Oauth Client)
+    - Token in gioco
+        - Authorization code
+            - ottenuto una volta che l'utente ha fornito autorizzazioni al Client
+            - è la prova che l'utente ha concesso delle autorizzazioni al Client
+        - Access token
+            - ottenuto una volta che il RP si è identificato presso AS mostrato il client secret e Authorization Code
+            - token da presentare al Resource Server per ottenere accesso a dei dati
+    - Authorization Server e Client si conoscono a priori e tra loro vi è già stabilità una relazione di fiducia 
+        - client ID e client secret sono dati già scambiati in precedenza ai flussi di autorizzazione
+        - By keeping the client secret, secret, **this is how the Authorization Server can identify the Client** and make sure not to give an access token to an impostor
+
+34. OIDC
+    - OAuth 2.0 is designed only for authorization
+        - granting access to data from one application to another.
+        - per ottenere anche autenticazione si potrebbe pensare usare sempre oauth predisponendo un endpoint del tipo /userinfo con cui recuperare l'identità dell'utente
+        - meglio usare OIDC
+    - OIDC is a thin layer that sits on top of OAuth that adds identity information about the person who is logged in.
+        - permette sia la gestione delle autorizzazioni che delle autenticazioni
+        - autorizzazioni vengono concesse in maniera analoga ad OAuth (thin layer that sits on top)
+        - se serve autenticazione, invece di accedere a dati generici il Client accede all'identità digitale
+    - The OpenID Connect flow **looks the same as OAuth**.
+        - le entità in gioco sono le stesse
+        - ci sono sempre authorization code ed access token
+    - The only differences are
+        - in the initial request, a **specific scope of openid** is used (Client vuole accedere all'identità digitale)
+        - and in the final exchange the Client receives both an Access Token and an **ID Token**
+        - l'id token è un jwt (quindi firmato) contenente l'identità digitale dell'utente
+    - Con le informazioni presenti nell'id token (firmate dall'IdP) il Client può registrare l'utente (se è la prima volta) e il resource owner può finalmente accedere al servizio del RP
+        - è qui che avviene l'autenticazione! (identificazione dell'utente)
+        - notare che come prima non è stata condivisa la pwd dell'utente con il RP
+    - Riassumendo:
+        - l’access token autorizza l’accesso alle risorse
+        - mentre l’ID token autentica l’utente e trasmette in modo sicuro la sua identità al Client
+
+35. Blockchain
+    - blockchain come tecnologia per risolvere trust problem
+        - pensa a pagamenti online
+        - acquirente e venditore in generale non si fidano l'uno dell'altro
+        - si fa affidamento ad una terza parte fidata centrale (banca) che mi conferma che il pagante ha i soldi necessari per completare la transazione
+            - la terza parte deve essere online altrimenti non riesco a pagare
+            - la terza parte sa cosa compro/vendo
+        - con blockchain 
+            - possiamo validare le transazioni, e più in generale ottenere consenso in un sistema decentralizzato, in un contesto non fidato
+            - **eliminando la terza parte fidata centrale**, mantenendo così totale anonimità
+    - Consenso
+        - Distributed processes that have to agree on a single value (e.g., new status of the system).
+        - **blockchain è una soluzione al problema del consenso nel contesto bizantino (nodi che possono mentire) di internet**
+        - vogliamo che nodi in un sistema decentralizzato, che non si fidano tra di loro, e con la presenza di nodi malevoli, riescano a mettersi daccordo sullo stato delle transazioni senza la terza parte fidata che detta legge
+
+    - struttura blockchain
+        - A blockchain is an **append-only list of (effectively) IMMUTABLE records (ledger)**, called **blocks (che sono quindi dati di qualsisi natura)**, that are linked together using hash-pointers.
+            - è quindi una semplice **struttura dati**
+        - Blockchains are typically **managed by a decentralized peer-to-peer network** for use as a publicly distributed ledger (DB distribuito).
+            - **distributed on many nodes of a P2P network (everyone has a copy of the ledger)**
+            - e **decentralized (nobody owns it)**
+        - The block consists of two main parts:
+            - Header: contains the hash of the previous block, the root hash of the Merkle tree (data hash) and other information
+            - Merkle tree (data):
+                - how the data is structured inside a block
+                - the leaves of the tree are the transactions (notare il plurale) contained in the block.
+
+    - Peers who generate new blocks are called miners. 
+        - **A miner receives transactions from clients**.
+        - After **validating them**, it can start the process of generating a new block.
+        - To discourage byzantine miners and DoS attacks, **Bitcoin requires miners to solve a “puzzle” (mining) in order to generate a new block**
+            - This is the so-called **Proof of Work**.
+            - PoW = biglietto d’ingresso costoso per proporre un blocco.
+                - I nodi scartano automaticamente i blocchi senza PoW valida → spam inutile.
+            - Solving the puzzle in a short time requires a **large amount of computational power**.
+            - Also, if you solve the puzzle, **you get a reward in Bitcoin**.
+                - qusto incentiva i miner a produrre nuovi blocchi il che risolve le fork
+        - **Perché serve la Proof of Work (PoW) per aggiungere blocchi?**
+            - chiunque potrebbe dire: “Ho creato il nuovo blocco, accettatelo!”
+                - **La PoW introduce un costo computazionale per proporre un blocco**.
+                - per essere preso sul serio, un blocco deve dimostrare che il suo creatore ha consumato risorse reali (energia, tempo, hardware).
+            - **Come scoraggia i nodi bizantini?**
+                - Un nodo bizantino potrebbe voler immettere blocchi invalidi o manipolati.
+                - Ma per ogni blocco deve risolvere il puzzle → costa soldi ed energia.
+                - Se la maggioranza (>50% della potenza di calcolo) è onesta, **la catena valida crescerà più velocemente di quella malevola** e per nakamoto consensus gli altri nodi seguiranno la catena onesta.
+                    - è difficile che un attaccante abbia > 50% della potenza computazionale della rete
+                    
+    - **Nakamoto consensus**
+        - the algorithm used in Bitcoin network to achieve **trustless consensus** riguardo al prossimo blocco contenente transazioni da aggiungere.
+            - l'unica assunzione è che il 50% +1 dei nodi della rete sia non malevolo (altrimenti la maggioranza si mette daccordo su quello che vuole)
+        - Two possible scenarios:
+            - The miner solves the puzzle, adds the block to its chain and sends it to all other nodes (broadcast)
+            - The miner before solving the puzzle receives a block from another node. In this case, it stops searching for the solution and adds the block to its chain.
+        - **NB**: Actually, a new block may arrive at any moment (asynchrony). **What happens if a miner receives a block when it has already added one to its chain?**
+            - **The miner keeps both blocks** as if they are both valid, resulting in a **fork**.
+            - The rule is that **the longest chain is the one that individual nodes accept as a valid** version of the blockchain.
+                - **NB**: questa è la regola di consenso
+            - blocks inside the other shorter paths of the fork are called “orphans” and transactions in them are considered invalid.
+
+    - **La blockchain è tamper-resistant**
+        - in generale se modifico un blocco devo anche modificare tutti i blocchi successivi per aggiustare gli hashpointer
+        - questo lo posso anche fare sulla mia copia locale ma poi devo raggiungere il consenso del resto della rete
+            - devo fare una o più PoW per aggiungere i miei blocchi modificati (che produrranno una fork)
+            - intanto il resto della rete continua ad aggiungere blocchi il che peggiora la mia situazione
+            - anche se riesco a fare le PoW, genero una fork e la mia catena deve diventare quella più lunga (vedi nakamoto consensus) 
+        - per questo motivo i dati nella blockchain sono **effectively immutable**
+            - non basta che io modifica la mia copia locale della blockchain!
+            - **i fatti veri sono dettati dalla maggiornaza dei nodi**
+
+    - **Double spending** come esempio di tamper-resistance della blockchain
+        - Double-spending is the risk that a cryptocurrency can be used twice or more.
+        - What an attacker might do is send two different transactions to two different miners.
+            - i miner aggiungono alla loro catena personale le due transazioni
+            - quindi sembra che gli stessi soldi siano stati spesi due volte ...
+        - But no problem! **Eventually one of the two blocks will be considered invalid**
+            - abbiamo che i due miner aggiungono ognuno il loro nodo -> producono una fork nella catena
+            - dipendentemente da quale dei due percorsi diventa il più lungo, una delle due transazioni diventa invalida 
+            - The rule per avere certezza che una transazione sia valida, is to wait for the block in which the transaction is present to be “buried” by other blocks (about 6).
+                - dopo 6 è difficile che catene concorrenti superino la propria
+            - nakamoto consensus previene il double spending invalidando uno dei due blocchi
+
+    - Double spending con 51%
+        - It is possible to exploit the fork mechanism to double-spend, if one entity owns 51% of the computational power of the entire network.
+        - Se l’attaccante controlla più della metà della potenza di calcolo totale della rete, **questo significa che può generare blocchi più velocemente di tutti gli altri miner messi insieme.**
+        - L'attaccante può comprare qualcosa e aspettare che il venditore invii il bene (magari egli ha anche aspettato 6 blocchi per sicurezza) 
+        - Una volta ricevuto il bene, l'attaccante può attivare i suoi miner (> 50%) e cominciare una catena alternativa in cui la transazione verso il venditore non è mai avvenuta
+        - Siccome l'attaccante possiede la maggior parte della potenza computazionale della reta, prima o poi la sua catena diventerà quella più lunga e gli altri nodi saranno costretti ad accetarla come valida
+        - Il venditore perde sia i beni consegnati che i bitcoin.
+
+    - Considerazioni su nakamoto consensus
+        - Agreement:
+            - probabilistic.
+            - If we stop at any time, we can always have forks.
+        - Termination:
+            - to have deterministic agreement we cannot stop!
+        - The main drawback of Bitcoin (Nakamato Consensus really) is that **it can never stop in order to work**.
+            - beh potrei fermarmi e scartare tutti i blocchi presenti in una fork...
+            - però in effetti questa lista potrebbe essere arbitrariamente lunga
+        - Inoltre, con nakamoto consensus:
+            - risolvo fork e double spending
+            - ... ma devo aspettare un'ora per comprare qualcosa 
+
+36. Smart contract
+    - una blockchain è una struttura dati distribuita in un sistema decentralizzato
+    - uno smart contract è un programma salvato su blockchain ed eseguito dai peer della rete
+        - Stored on the blockchain = Each node in the network has a copy of it.
+    - **Come viene eseguito?**
+        - Each contract has an address that uniquely identifies it, functions that can be invoked, and an internal state (e.g. the value of a variable at a given moment in time).
+        - To execute a function it is necessary **to perform a transaction to the address of the SC**, specifying the function name and arguments.
+        - Each node independently executes the operations defined by the contract on its local copy.
+        - **All of them have to get the same result to reach the consensus**. Otherwise the transaction is not valid and is rejected. 
+    - **Cosa ottengo**
+        - esecuzione distribuita, fault tolerant
+            - non ho un server centralizzato su cui esegue il codice
+            - tutti lo eseguono
+        - dati immutabili
+        - tracing completo
+            - ho l'intera storia dell'esecuzione del programma
+        - disaster recovery
+            - in eventualità di crash lo stato precedente è riproducibile in quanto salvato su blockchain sotto forma di transazioni
