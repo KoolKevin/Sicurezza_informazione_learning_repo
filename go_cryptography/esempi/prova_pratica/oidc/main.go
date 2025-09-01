@@ -45,7 +45,7 @@ var (
 	logger            *slog.Logger
 	oauthConf         *oauth2.Config
 	googleUserinfoAPI = "https://www.googleapis.com/oauth2/v3/userinfo"
-	// "It’s important to generate a randome 'state' parameter to use to protect the client from CSRF attacks.
+	// "It’s important to generate a random 'state' parameter to use to protect the client from CSRF attacks.
 	//  GitHub will redirect the user back here with the state in the query string, so we can verify it matches
 	//  before exchanging the authorization code for an access token"
 	//
