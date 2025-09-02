@@ -1,47 +1,102 @@
-1. 
-La sicurezza dipende da come è stato scelto il segreto (chiave). Se l’utente, per potersela facilmente ricordare a memoria, ha usato un’informazione che l’intruso può prevedere (ad esempio il suo nome, o il suo anno di nascita, o i dati di un suo familiare, ecc.), il tirare ad indovinare ha una notevole probabilità di successo.
+1. Segreti 
+    - I segreti possono essere
+        - intercettati
+        - dedotti (dal ciphertext)
+        - **indovinati**
+    - Le contromisure sono rispettivamente:
+        - mascherare i segreti cifrandoli
+        - rendere i segreti indeducibili usando degli algoritmi crittografici robusti
+        - usare dei segreti casuali
 
-La prima difesa preventiva è quindi quella di usare dati casuali.
-- R12: ”I bit della stringa che rappresenta un dato segreto devono essere equiprobabili ed indipendenti ”
-- Ciò richiede la disponibilità di un nuovo meccanismo per la sicurezza, il generatore di numeri casuali o RNG (Random Number Generator)
+    - Per quando riguarda l'indovinabilità, la sicurezza dipende da come è stato scelto il segreto (chiave). Se l’utente, per potersela facilmente ricordare a memoria, ha usato un’informazione che l’intruso può prevedere (ad esempio il suo nome, o il suo anno di nascita, o i dati di un suo familiare, ecc.), il tirare ad indovinare ha una notevole probabilità di successo.
+    - La prima difesa preventiva è quindi quella di usare dati casuali.
+        - R12: ”I bit della stringa che rappresenta un dato segreto devono essere equiprobabili ed indipendenti ”
+        - Ciò richiede la disponibilità di un nuovo meccanismo per la sicurezza, il generatore di numeri casuali o RNG (Random Number Generator)
+    - la complessità computazione non mette in conto il caso più favorevole per l’intruso; utile è dunque la adozione di un secondo provvedimento.
+        - R13: ”un dato segreto deve essere frequentemente modificato”. 
+            - In questa maniera non concediamo all’intruso il tempo di svolgere molte prove.
+            - per lo stesso motivo, usare tante volte lo stesso segreto per molti messaggi non è raccomandabile
 
-Abbiamo già anche commentato il fatto che la complessità computazione non mette in conto il caso più favorevole per l’intruso; utile è dunque la contemporanea adozione di un secondo provvedimento.
-- R13: ”un dato segreto deve essere frequentemente modificato”. 
-    - In questa maniera non concediamo all’intruso il tempo di svolgere molte prove.
-    - per lo stesso motivo, usare tante volte lo stesso segreto per molti messaggi non è raccomandabile
+2. Funzioni di hash crittograficamente sicure
+    - proprietà
+        - facile da calcolare
+        - resistenza debole alle collisioni
+            - dato un x e il suo hash H(x) è infattibile trovare un altro y con lo stesso hash
+            - altrimenti diventa difficile garantire integrità ed autenticazione
+                - si riesce a trovare un m* : H(m*) = H(m)
+                - quindi è sufficiente **inviare il messaggio m*||H(m||s)**
+                    - con HMAC (se il segreto è allineato con la dimensione del blocco)
+            - vale anche se si utilizza la firma come autenticatore S(H(m))
+            - l'attaccante **non ha neanche bisogno di conoscere il segreto**
+        - resistenza forte alle collisioni
+            - infattibile trovare due stringhe qualunque che hanno lo stesso hash
+            - altrimenti uno potrebbe presentare un documento firmato e in un secondo momento dire che il documento era un altro con lo stesso hash
+        - infattibili da invertire
+            - altrimenti potrei invertire un HMAC e risalire al segreto -> autenticità rotta
+    - numero di bit di un hash
+        - bisogna garantire sia resistenza forte che debole
+        - è più difficile garantire resistenza forte (paradosso del compleanno mi fa scalare i tentativi con ^(n/2))
+        - ho bisogno quindi di 256 bit di hash
+    - implementazione con schema a stadi detto compressione iterata per comprimere stringhe arbitrariamente lunghe
+        - all'interno di ogni stadi vi è una mini-funzione di hash _f_ che calcola il suo hash prendendo gli _r_ bit del suo blocco dati e gli *__n* bit dell'hash dello stadio precedente__
+        - il primo blocco usa un IV come 'hash dello stadio precedente'
+        - **NB**: Se l’ultimo blocco del messaggio m è più piccolo di r bit lo si completa con un **padding**.
+            - **Il padding è fondamentale per evitare attacchi con estensione del messaggio**.
+            - per questo motivo, **viene introdotto in ogni caso**, anche se il messaggio è già multiplo dei blocchi.
+    - attacco con estensione del messaggio
+        - Consideriamo una sorgente che, dopo aver concordato un segreto s con la destinazione, le invia un messaggio m ed il suo MAC H(s||m), **calcolato però senza aver aggiunto alla fine di m l’indicazione di quanto è lungo.**
+        - L’intruso può in questo caso condurre un attacco di length extension:
+            - individua un’estensione m’ di m di suo interesse (forma cioè un messaggio m||m’) e calcola H(m’),
+                - **ponendo attenzione a fornire all’algoritmo come stato iniziale non la costante h0, ma il dato H(s||m) che ha intercettato**.
+            - L’impronta H(m’) così ottenuta è **per costruzione uguale a quella di H(s||(m||m’))** e quindi **il messaggio forgiato dall’intruso sarà giudicato dalla destinazione come generato dalla sorgente (autentico e integro)**.
+            - la destinazione è convinta che il mittente abbia mandato m||m' e non m
+        - con il padding attenuo il problema
+            - l'attaccante può produrre un messaggio con due padding che più difficilmente ha senso ma potrebbe comunque averlo
+            - HMAC / usare H(m||S) risolve il problema
 
-2. 
-tutto il file su funzioni di hash
-
-
-3. 
-Nelle applicazioni crittografiche la sola casualità non è sufficiente. Occorre, infatti, anche l’imprevedibilità: ```un intruso che è riuscito ad intercettare l’uscita o ad individuare, in tutto o in parte, lo stato del generatore non deve poter dedurre da quale seme sono partiti i calcoli e/o quali saranno i prossimi valori generati.```
-
-Un generatore pseudocasuale che ha anche la proprietà di imprevedibilità è detto **PRNG crittograficamente sicuro** o CSPRBG (Cryptographically Secure PseudoRandom Bit Generator).
-
-Per conseguire imprevedibilità occorre che:
-- il periodo sia grandissimo (10^50, 10^100), per poterlo suddividere con il seed in moltissime sottosequenze;
-- il seme sia imprevedibile e tenuto segreto
-    - tipicamente il seme viene generato da un TRNG
-    - **non siamo tornati punto e a capo con la riproducibilità?** Penso di no dato che il seme diventa un segreto da scambiare (di dimensione molto più limitata rispetto alla chiave di un one-time pad ad esempio)
-- sia unidirezionale o la funzione di stato futuro, o la funzione d’uscita
-    - per rendere impossibile ad un avversario che ha individuato uno stato il risalire agli stati precedenti ed al seme; 
-
-Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla produzione di una sequenza di bit
-- casuali
-- imprevedibili in quanto scelti da un seme che seleziona una sottosequenza tra le molte presenti nel periodo grandissimo del PRNG
-- seme deve essere tenuto segreto ed è anch'esso imprevedibile (i punti 2 e 3 sopra servono a questo) altrimenti la sequenza viene scelta viene svelata
-    - per questo si impiega TRNG
-
+3. Generazione di numeri casuali
+    - servono per generare
+        - chiavi segrete
+        - IV/seed
+        - nonce
+    - è importante che i bit prodotti siano casuali
+        - altrimenti un attaccante puà indovinare
+    - Per ottenere verà casualità si usano i TRNG
+        - frequenza di generazione bassa
+        - riproducibilità impossibile
+            - in cifrari a flusso, sorgente e destinazione devono produrre lo stesso flusso di chiave
+    - per risolvere i problemi sopra si utilizzano i PRNG, algoritmi deterministici che seguono il modello di ASF
+    - PRNG garantiscono casualità, riproducibilità (se uso lo stesso seme produco la stessa sequenze) e alta frequenza di generazione, ma **non imprevedibilità**. 
+    - la sola casualità non è sufficiente. Occorre, anche l’imprevedibilità: ```un intruso che è riuscito ad intercettare l’uscita o ad individuare, in tutto o in parte, lo stato del generatore non deve poter dedurre da quale seme sono partiti i calcoli e/o quali saranno i prossimi valori generati.```
+    - Un generatore pseudocasuale che ha anche la proprietà di imprevedibilità è detto **PRNG crittograficamente sicuro**
+    - Per conseguire imprevedibilità occorre che:
+        - il periodo sia grandissimo (10^50, 10^100), per poterlo suddividere con il seed in moltissime sottosequenze;
+        - **il seme sia imprevedibile e tenuto segreto**
+            - tipicamente il seme viene generato da un TRNG
+        - sia unidirezionale o la funzione di stato futuro, o la funzione d’uscita
+            - per rendere impossibile
+                - ad un avversario che ha individuato un uscita il risalire allo stato che l'ha generata (e quindi poi risalire al seme)
+                - ad un avversario che ha individuato uno stato il risalire agli stati precedenti ed al seme; 
+    - Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla produzione di una sequenza di bit
+        - casuali
+        - imprevedibili in quanto scelti da un seme che seleziona una sottosequenza tra le molte presenti nel periodo grandissimo del PRNG
+        - seme deve essere tenuto segreto ed è anch'esso imprevedibile (i punti 2 e 3 sopra servono a questo) altrimenti la sequenza scelta viene svelata
+            - per questo si impiega TRNG
 
 4. Cifrari a flusso
     - sono in pratica uno xor con un flusso di chiave pseudocasuale
-    - il flusso di chiave prodotto si basa su un seed. Questo deve essere scambiato in segreto da sorgente e destinazione altrimenti un attaccante può riprodurre lo stesso flusso di chiave
+    - il flusso di chiave prodotto si basa su un seed.
+        - Questo deve essere scambiato in segreto da sorgente e destinazione
+        - e deve essere imprevedibile
+        - altrimenti un attaccante può riprodurre lo stesso flusso di chiave
     - possono essere
         - a flusso sincrono             -> flusso di chiave generato con un PRNG (funzioni di F e G)
-        - a flusso autosincronizzante   -> flusso di chiave generato con un registro a scorrimento (in cui ci finisce in retroazione l'uscita prodotta) e una funzione F 
+            - meglio per canali rumorosi ma affidabili
+        - a flusso autosincronizzante   -> flusso di chiave generato con un registro a scorrimento in cui ci finisce in retroazione l'uscita prodotta, e una funzione F 
+            - meglio per canali non rumorosi ma poco affidabili
     - a causa dello xor si ha
         - two-time-key vulnerability    -> c1 ^ c2 = m1^k ^ m2^k = m1 ^ m2
+            - non bisogna usare lo stesso flusso di chiave più volte, ovvero, bisogna sempre cambiare il seme (vedi WEP)
         - malleabilità: modifiche al testo cifrato hanno un effetto prevedibile sul testo in chiaro
             - c ^ m' -- viene decifrato come --> m* = m^k^m' ^k = m ^ m'
             - Se l’attaccante conoscesse il messaggio (o se lo immagina, perché m, magari, è fortemente strutturato) potrebbe cambiare parte del testo a suo piacimento.
@@ -62,37 +117,50 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
                 - motivo in più per cambiarla spesso
     - Un buon cifrario simmetrico dovrebbe:
         - produrre ciphertext diversi anche partendo da plaintext identici
-            - altrimenti posso vedere se i cifrati combaciano (chose plaintext)
+            - altrimenti posso vedere se i cifrati combaciano (chosen plaintext)
         - mascherare le regolarità del plaintext facendo **dipendere ogni blocco del ciphertext da qualcos'altro oltre corrispondente blocco del plaintext (e la chiave)**
             - altrimenti malleabilità attraverso sostituzione di blocchi
         - questo è quello che fanno le prossime modalità di cifratura
     - CBC
-        - ogni blocco di cifrato si ottiene cifrano il relativo blocco di plaintext in xor con il cifrato precedente
+        - ogni blocco di cifrato si ottiene cifrando il relativo blocco di plaintext in xor con il cifrato precedente
             - Sorgente (cifratura): c0 = IV, ci = Ek(ci-1 ⊕ mi)
             - Destinazione (decifratura): IV = c0, mi = Dk(ci) ⊕ ci-1 = ci-1 ⊕ mi ⊕ ci-1
-        - per il primo blocco si utilizza un IV che cambia sempre
+        - per il primo blocco si utilizza un IV **che cambia sempre**
             - in questa maniera messaggi uguali o che iniziano in maniera identica vengono cifrati in maniera diversa e non si è suscettibili al chosen plaintext attack citato sopra
         - In CBC **l'attacco di malleabilità è infattibile**
             - se si prova a sostituire un blocco cifrato tutti i successivi vengono decifrati male
             - in ogni caso è impossibile trovare un blocco cifrato nella stessa maniera dato che l'IV cambia sempre
         - modalità di cifratura abbastanza lenta in quanto non parallelizzabile
+            - in decifratura è parallelizzabile
     - OFB e CFB
         - sono implementazioni di cifrari a flusso basati su cifrari a blocchi:
             - OFB realizza un Cifrario a flusso sincrono
             - CFB un Cifrario a flusso con auto-sincronizzazione
-        - impiegano la sola trasformazione E per generare un flusso di chiave
+        - **impiegano la sola trasformazione E per generare un flusso di chiave**
             - identico lato sorgente e lato destionazione
             - notare in queste implementazini, un attaccante che conosce il seed non può comunque riprodurre lo stesso flusso di chiave dato che non ha la chiave k
+                - il seed può 
         - il flusso di chiave è sempre diverso grazie ad un IV che fa da seed
-        - malleabilità quindi prevenuta dato che non si riescono a trovare due messaggi cifrati con lo stesso flusso di chiave
+            - 2-time key attack prevenuta
+            - anche malleabilità (intesa come sostituzione di pezzi di cifrato) prevenuta dato che non si riescono a trovare due messaggi cifrati con lo stesso flusso di chiave
+                - (vale comunque la malleabilità dei cifrari a flusso)
+        - si può parallelizzare cifrando/decifrando molteplici blocchi alla volta 
     - Counter
-        - simile ad OFB però opera su blocchi
+        - simile ad OFB però opera su blocchi e al posto di usare una funzione di stato futuro, si incrementa un contatore
             - il comportamento è quindi quello di un cifrario a flusso sincrono (con le relative considerazioni sulla sincronizzazine)
+            - i blocchi sono indipendenti e quindi si può parallelizzare
         - impiegano la sola trasformazione E per generare un flusso di chiave
             - identico lato sorgente e lato destionazione
         - di nuovo non malleabile perchè il seed (IV) non si ripete
-    - Beast attack (block injection attack)
+            - (di nuovo vale la malleabilità dei cifrari a flusso)
+
+    - **Beast attack (block injection attack)**
         - se conosco il CBC residue che verrà utilizzato (IV prevedibile) posso costruire un messaggio che annulla roba (xor) e viene cifrato come un messaggio precedente su cui sto facendo ipotesi
+            - m1' = la mia ipotesi sul contenuto di un messaggio = Kimberly
+            - K = CBC residuo al blocco 1 = cifratura del blocco 1
+            - K1 = CBC residuo al blocco 2 = cifratura del blocco 2
+            - do come input al terzo blocco m1'^K^K1 ottenendo una cifratura analoga a quella del blocco 1   
+                - m1^K = m1'^K1^K^K1 
         - rompo il non determinismo di CBC e faccio un attacco simile a quello che facevo con ECB
     - paradosso del compleanno per cifrari a blocchi
         - La probabilità che un attaccante trovi due blocchi di testo cifrato uguali scala con 2^(n/2) e non con 2^n (paradosso del compleanno)
@@ -104,6 +172,7 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
 6. Master Key e KDC vai prima a riguardarti gli appunti
     - interessante l'utilizzo della cifratura con un segreto come strumento di identificazione
         - solo se sei chi dici di essere saprai decifrare questo messaggio contenente la chiave di sessione
+        - usato anche in kerberos
 
 7. Scambi DH
     - DH anonimo
@@ -163,18 +232,29 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
         - sia il certificato -> che associa una identità ad una chiave pubblica
         - che la POP         -> che dimostra che che il mittente è il proprietario della chiave pubblica presentata (e per transitività, identifica il mittente con l'identità presente nel certificato)
 
-9. CRL
-    - listone di tutti i certificati revocati
-    - viene emessa ed aggiornata periodicamente
-    - struttura simile ad un certificato nel senso che è firmata da una CA ed ha un periodo di validità (fino alla prossima emissione)
-    - Può diventare molto grande è quindi è importante adottare delle tecniche che consentono di ridurre la dimensione/la quantità di dati da trasferire all'utente
-        - elimino le entry relative a certificati scaduti nell CRL successive alla loro data di scadenza 
-            - sono scadute non c'è bisogno di manterle 
-                - se il certificato era stato revocato elimino la entry
-                - se non era stato revocato non la aggiungo neanche
-        - pubblico i diff -> aiuta solo la bandwidth
-        - sotto-liste -> si grazie
-    - problema della freschezza, tra un aggiornamento e l'altro potrebbero essere stati revocati dei certificati -> c'è anche OCSP
+9. CRL e OCSP
+    - CRL = listone di tutti i certificati revocati
+        - viene emessa ed aggiornata periodicamente
+        - struttura simile ad un certificato nel senso che è firmata da una CA ed ha un periodo di validità (fino alla prossima emissione)
+        - Può diventare molto grande è quindi è importante adottare delle tecniche che consentono di ridurre la dimensione/la quantità di dati da trasferire all'utente
+            - elimino le entry relative a certificati scaduti nell CRL successive alla loro data di scadenza 
+                - sono scadute non c'è bisogno di manterle 
+                    - se il certificato era stato revocato elimino la entry
+                    - se non era stato revocato non la aggiungo neanche
+            - pubblico i diff -> aiuta solo la bandwidth
+            - sotto-liste -> si grazie
+        - problema della freschezza, tra un aggiornamento e l'altro potrebbero essere stati revocati dei certificati -> c'è anche OCSP
+    - OCSP
+        - l’utente può avere **informazioni in tempo reale circa lo stato di revoca di un certificato grazie ad un server sempre online**. 
+        - OCSP È un protocollo “client-server” in modalità “pull” che **funziona solo online** (al contrario delle CRL che una volta scaricate possono essere consultate anche offline). 
+        - data una richiesta mi risponde con lo stato di revoca di un certificato
+        - OCSP attinge informazioni dalle CRL ma non solo!
+            - magari chiede direttamente anche ad una CA (che riceve le richieste di revoca)
+        - **Le risposte sono firmate dal server, non dalla CA!**
+            - Il server OCSP avrà una coppia di chiavi certificata da una CA. 
+        - OCSP viene quindi usato principalmente per due motivi:
+            - Freschezza delle informazioni;
+            - Un utente non si deve scaricare l'intera CRL ma solo l'informazione sullo stato di revoca del certificato richiesto.
 
 10. Gerarchia delle CA
     - non tutti gli utenti vengono certificati dalla stessa CA
@@ -682,8 +762,7 @@ Riassumendo, abbiamo che PRNG crittograficamente sicuro è caratterizzato dalla 
 34. OIDC
     - OAuth 2.0 is designed only for authorization
         - granting access to data from one application to another.
-        - per ottenere anche autenticazione si potrebbe pensare usare sempre oauth predisponendo un endpoint del tipo /userinfo con cui recuperare l'identità dell'utente
-        - meglio usare OIDC
+        - per ottenere anche autenticazione si potrebbe pensare usare sempre oauth predisponendo un endpoint del tipo /userinfo con cui recuperare l'identità dell'utente... meglio usare OIDC
     - OIDC is a thin layer that sits on top of OAuth that adds identity information about the person who is logged in.
         - permette sia la gestione delle autorizzazioni che delle autenticazioni
         - autorizzazioni vengono concesse in maniera analoga ad OAuth (thin layer that sits on top)
