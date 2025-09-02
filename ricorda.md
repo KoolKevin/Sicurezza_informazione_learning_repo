@@ -82,6 +82,9 @@
         - imprevedibili in quanto scelti da un seme che seleziona una sottosequenza tra le molte presenti nel periodo grandissimo del PRNG
         - seme deve essere tenuto segreto ed è anch'esso imprevedibile (i punti 2 e 3 sopra servono a questo) altrimenti la sequenza scelta viene svelata
             - per questo si impiega TRNG
+    - **NB**: spesso, oltre a casualità ed imprevedibilità, è importante che IV/Seed siano **usati una e una sola volta**, altrimenti 
+        - two-time key vulnerability in cifrari a flusso
+        - messaggi uguali vengono cifrati nello stesso modo in CBC il che abilità chosen plaintext attack (confronto se i cifrati sono uguali)  
 
 4. Cifrari a flusso
     - sono in pratica uno xor con un flusso di chiave pseudocasuale
