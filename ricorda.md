@@ -118,6 +118,7 @@
             - suscettibile ad attacchi di malleabilità (sostituzione di blocchi cifrati con la stessa chiave intercettati) che di chosen plaintext (controllo due cifrati e vedo se combaciano)
                 - funzionano se la chiave è la stessa (nel secondo caso magari qualcuno cifra per me (voto elettronico) o magari posso ingannarlo a farlo)
                 - motivo in più per cambiarla spesso
+            - ci vuole il padding per l'ultimo blocco
     - Un buon cifrario simmetrico dovrebbe:
         - produrre ciphertext diversi anche partendo da plaintext identici
             - altrimenti posso vedere se i cifrati combaciano (chosen plaintext)
@@ -135,6 +136,7 @@
             - in ogni caso è impossibile trovare un blocco cifrato nella stessa maniera dato che l'IV cambia sempre
         - modalità di cifratura abbastanza lenta in quanto non parallelizzabile
             - in decifratura è parallelizzabile
+        - ci vuole padding per l'ultimo blocco
     - OFB e CFB
         - sono implementazioni di cifrari a flusso basati su cifrari a blocchi:
             - OFB realizza un Cifrario a flusso sincrono
@@ -148,6 +150,7 @@
             - anche malleabilità (intesa come sostituzione di pezzi di cifrato) prevenuta dato che non si riescono a trovare due messaggi cifrati con lo stesso flusso di chiave
                 - (vale comunque la malleabilità dei cifrari a flusso)
         - si può parallelizzare cifrando/decifrando molteplici blocchi alla volta 
+        - non parallelizzabili in quanto ci sono delle retroazioni (flusso di chiave / cifrato precedenti)
     - Counter
         - simile ad OFB però opera su blocchi e al posto di usare una funzione di stato futuro, si incrementa un contatore
             - il comportamento è quindi quello di un cifrario a flusso sincrono (con le relative considerazioni sulla sincronizzazine)
@@ -156,6 +159,7 @@
             - identico lato sorgente e lato destionazione
         - di nuovo non malleabile perchè il seed (IV) non si ripete
             - (di nuovo vale la malleabilità dei cifrari a flusso)
+        - parallelizzabile operando come con ECB aggiustando i vari counter
 
     - **Beast attack (block injection attack)**
         - se conosco il CBC residue che verrà utilizzato (IV prevedibile) posso costruire un messaggio che annulla roba (xor) e viene cifrato come un messaggio precedente su cui sto facendo ipotesi

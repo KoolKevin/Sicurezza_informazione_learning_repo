@@ -8,7 +8,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"log/slog"
 	"net/http"
@@ -239,7 +238,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 
 	// recupero il contenuto che mi interessa
 	var identità Identità
-	if err := json.NewDecoder(io.NopCloser(bytes.NewReader(payload))).Decode(&identità); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(payload)).Decode(&identità); err != nil {
 		http.Error(w, "Errore decodifica JSON: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
