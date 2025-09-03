@@ -124,7 +124,7 @@ si ha:
         - ho già tutti i ci-1
 
 - propagazione degli errori: 
-    - **in decifratura**, se un blocco cifrato viene alterato, si modificano tutti i blocchi seguenti (vedi immagine slide se ti serve)
+    - **in decifratura**, se un blocco cifrato viene alterato, si modifica il blocco seguente (vedi immagine slide se ti serve)
 
 **In CBC l'attacco di malleabilità è infattibile**
 - Si è appena visto che se si prova a sostiture un blocco, la decifratura di tutti i blocchi seguenti viene corrotta

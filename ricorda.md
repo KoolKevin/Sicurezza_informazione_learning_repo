@@ -176,10 +176,34 @@
         - se produce cifrature uguali posso sfruttare le proprietà dello xor (varia in base alla modalità di cifratura in questione) per attuare un **two time key attack**
         - un cifrario a blocchi è sicuro se e solo se i blocchi hanno dimensione >= 128 bit
 
-6. Master Key e KDC vai prima a riguardarti gli appunti
-    - interessante l'utilizzo della cifratura con un segreto come strumento di identificazione
-        - solo se sei chi dici di essere saprai decifrare questo messaggio contenente la chiave di sessione
-        - usato anche in kerberos
+6. Scambi di chiave con Master Key e KDC
+    - Master key
+        - due corrispondenti precondividono una master key con cui cifrano chiavi di sessione ogni volta che comunicano
+            - la master key viene condivisa con un costoso incontro diretto
+        - vi è il pericolo che cifrando troppi messaggi con la stessa master key si incorra in un attacco di crittanalisi
+        - per questo motivo la master key ha una vita limitata, seppur lunga
+        - questo schema è costoso in qunto richiede un canale out-of-band per lo scambio della master key è non scala (O(N^2))
+    - KDC
+        - in questo schema si sfrutta un'autorità FIDATA **con cui tutti gli utenti della comunità concordano individualmente una chiave segreta**.
+            - permette di avere comunità in cui **il numero di chiavi è pari al numero di utenti**
+        - A tale Autorità compete: 
+            - la **generazione di una chiave di sessione per ogni coppia di utenti che intendono comunicare**
+            - il **suo invio in modo riservato agli interessati**
+                - KDC cifra la chiave di sessione con il segreto preconcordato dell'interessato
+        - in questo schema è importante evitare gli attacchi con replica per avere la corretta identificazione della parti
+            - interessante l'utilizzo della cifratura con un segreto come strumento di identificazione
+                - solo se sei chi dici di essere saprai decifrare questo messaggio contenente la chiave di sessione
+                - usato anche in kerberos
+            - inoltre una volta condivise la chiavi di sessione, è importante che i due interlocutori si identifichino a vicenda, sempre con sfide e risposte fatte a colpi di nonce
+                - in particolare, si può verificare se la mia controparte è in grado di usare la chiave di sessione decisa dal KDC. Questo identifica in quanto solamente chi possiede il segreto preconcordato con il KDC è in grado di farlo.
+    - Infine, ho problemi se implemento le cifrature in modalità ECB?
+        - per cifrare chiavi di sessione la modalità ECB va bene dato che stanno in un blocco, ma ...
+        - determinismo
+            - se al passo 5 non si modifica di molto R_B l'attaccante può provare a forgiare una risposta nel tentativo di impersonare qualcun'altro 
+        - malleabilità
+            - **con ECB e_k(A||B) diventa e_k(A)||e_k(B) se i blocchi sono allineati**
+            - Un A malevolo potrebbe spacciarsi per chi vuole sostituendo il blocco relativo all'identità nel passo 3!
+    - Questo modello scala linearmente in una comunità di utenti, ma se si vuole avere una rete mondiale di KDC per fare comunicare tutti con tutti, si ritorna a punto e a capo con un numero di chiavi precondivise tra i KDC che scala con O(N^2)
 
 7. Scambi DH
     - DH anonimo
